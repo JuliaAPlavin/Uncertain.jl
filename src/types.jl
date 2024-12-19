@@ -42,12 +42,14 @@ end
 
 (::Type{T})(x::Value) where {T<:Value} = T(convert(valtype(T), x.v), convert(unctype(T), x.u))
 (::Type{T})(x::Number) where {T<:Value} = T(convert(valtype(T), x), convert(unctype(T), zero(x)))
-
+(::Type{T})(x) where {T<:Complex{<:Value}} = T(real(x), imag(x))
 
 @accessor value(v::Value) = v.v
 @accessor uncertainty(v::Value) = v.u
 @inline value(x) = x
 @inline uncertainty(x) = zero(x)
+value(x::Complex) = Complex(value(x.re), value(x.im))
+uncertainty(x::Complex) = Complex(uncertainty(x.re), uncertainty(x.im))
 
 Base.broadcastable(x::Union{ValueNumber,ValueReal}) = Ref(x)
 

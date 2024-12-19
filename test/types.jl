@@ -32,6 +32,10 @@ end
     @test zero(c) === U.Value(0+0im, 0.)
 
     @test_throws "isreal" (1+2im) ±ᵤ 0.5im
+
+    @test real(c) === 1 ±ᵤ 0.5
+    @test imag(c) === 2 ±ᵤ 0.5
+    @test real(typeof(c)) === typeof(real(c))
 end
 
 @testitem "conversions" begin
@@ -59,6 +63,28 @@ end
 @testitem "accessing basic numbers" begin
     @test U.value(123) === 123
     @test U.uncertainty(123) === 0
+end
+
+@testitem "equality" begin
+    @test U.Value(1, 0) == 1
+    @test U.Value(1, 0.1) != 1
+    @test U.Value(1, 0.5) == U.Value(1f0, 0.5f0)
+    @test U.Value(1, 0.1) != U.Value(1, 0.15)
+
+    @test U.Value(1 + 2im, 0) == 1 + 2im
+    @test Complex(U.Value(1, 0), U.Value(2, 0)) == 1 + 2im
+    @test U.Value(1 + 2im, 0.1) != 1 + 2im
+
+    @test promote(U.Value(10 + 20im, 0.1),                     Complex(U.Value(1, 0.1), U.Value(2, 0.1))) ===
+                 (Complex(U.Value(10, 0.1), U.Value(20, 0.1)), Complex(U.Value(1, 0.1), U.Value(2, 0.1)))
+    @test U.Value(1 + 2im, 0.1) == Complex(U.Value(1, 0.1), U.Value(2, 0.1))
+    @test U.Value(1 + 2im, 0.15) != Complex(U.Value(1, 0.1), U.Value(2, 0.1))
+    @test U.Value(1 + 2im, 0.1) != Complex(U.Value(1, 0.15), U.Value(2, 0.1))
+    @test U.Value(1 + 2im, 0.1) != Complex(U.Value(1, 0.1), U.Value(2, 0.15))
+end
+
+@testitem "broadcast" begin
+    @test U.Value(1, 0.1) .+ [1, 2, 3] == U.Value.([2, 3, 4], 0.1)
 end
 
 @testitem "Unitful" begin

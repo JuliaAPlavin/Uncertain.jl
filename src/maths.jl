@@ -83,7 +83,6 @@ Base.asin(a::Value) = Value(asin(_v(a)), inv(sqrt(one(_v(a)) - abs2(_v(a)))) * _
 Base.acos(a::Value) = Value(acos(_v(a)), inv(sqrt(one(_v(a)) - abs2(_v(a)))) * _Δ(a))
 
 Base.sincos(a::Value) = sin(a), cos(a)
-Base.cis(a::Value) = cos(a) + im * sin(a)
 
 Base.atan(a::Value) = Value(atan(_v(a)), inv(abs2(_v(a)) + one(_v(a))) *₀ _Δ(a))
 Base.atan(a::Value, b::Value) = let
@@ -136,7 +135,7 @@ for f in [:isnan, :isfinite]
 end
 
 for f in [:conj, :real, :imag]
-    @eval Base.$f(x::Value) = @modify($f, _v(x))
+    @eval Base.$f(x::Value) = Value($f(_v(x)), _Δ(x))
 end
 
 Base.deg2rad(a::Value) = Value(deg2rad(_v(a)), deg2rad(_Δ(a)))
