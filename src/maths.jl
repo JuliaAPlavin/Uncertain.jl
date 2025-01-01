@@ -1,4 +1,4 @@
-assume_independent() = false
+assume_independent() = true
 
 require(f, ::typeof(assume_independent)) =
     assume_independent() || error("""

@@ -45,17 +45,17 @@ Other packages tend to have orders-of-magnitude overhead: `Measurements.jl` beca
 
 The ultimate goal of `Uncertain.jl` is to support arbitrary uncertainty specifications, like asymmetric errors, intervals, or more complex distributions. All within a single uniform interface.
 
-As said above, other packages have a much higher performance overhead, but they have other advantages over `Uncertain.jl`. In particular, here we only handle operations on independent uncertain values. All functions that involve only one uncertain number like `exp(x::Uncertain.Value)` or `x::Uncertain.Value + y::Float64` are automatically correct as there are no dependencies possible. Computing multivariate functions like `x::Uncertain.Value + y::Uncertain.Value` correctly requires accounting for correlations in the general case; we do not do that here, and trying to evalue such an operation fails by default:
+As said above, other packages have a much higher performance overhead, but they have other advantages over `Uncertain.jl`. In particular, here we only handle operations on independent uncertain values. All functions that involve only one uncertain number like `exp(x::Uncertain.Value)` or `x::Uncertain.Value + y::Float64` are automatically correct as there are no dependencies possible. Computing multivariate functions like `x::Uncertain.Value + y::Uncertain.Value` correctly requires accounting for correlations in the general case; we do not do that here. We have a flag one can set to control whether to assume independent values, or fail on these operations:
 ```julia
+julia> Uncertain.assume_independent() = false
+
 julia> x = 1 ±ᵤ 0.1
 julia> y = 2 ±ᵤ 0.5
 
 julia> x + y
 ERROR: The `+` operation is only correct for independent `Uncertain.Value`s, and we have no way to prove the independence automatically.
 Set `Uncertain.assume_independent() = true` to execute such functions.
-```
-As explained in the error message, there's a flag to enable the independence assumption for multivariate operations:
-```julia
+
 julia> Uncertain.assume_independent() = true
 
 julia> x + y
