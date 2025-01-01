@@ -1,4 +1,5 @@
 @testitem "always-correct vs indepdendent-only" begin
+    Uncertain.assume_independent() = false
     a = 2 ±ᵤ 0.1
     @test a + 3 == 5 ±ᵤ 0.1
     @test_throws "independent" a + a
@@ -94,4 +95,22 @@ end
         @test ispass(@check db=false is_approx_same(Data.Just(op), smaller_valgen, smaller_valgen))
     end
     Uncertain.assume_independent() = false
+end
+
+@testitem "complex" begin
+    @test cis(1±ᵤ0.01) === Complex(0.5403023058681398 ±ᵤ 0.008414709848078966, 0.8414709848078965 ±ᵤ 0.005403023058681398)
+    @test cis(1±ᵤ0.01) |> U.value ≈ cis(1)
+    @test cis(1±ᵤ0.01) |> U.uncertainty ≈ 0.008414709848078966 + 0.005403023058681398im
+
+    @test U.Value(1 + 2im, 0.1) == Complex(U.Value(1, 0.1), U.Value(2, 0.1))
+
+    @test im*(1±ᵤ0.1) === U.Value(1im, 0.1)
+    cmplx = U.Value(1+2im, 0.5)
+    @test 2*cmplx == U.Value(2+4im, 1)
+    @test im*cmplx == U.Value(-2+1im, 0.5)
+    @test real(cmplx) == U.Value(1, 0.5)
+    @test imag(cmplx) == U.Value(2, 0.5)
+    @test conj(cmplx) == U.Value(1-2im, 0.5)
+    @test abs(cmplx) == U.Value(sqrt(5), 0.5)
+    @test angle(cmplx) == U.Value(atan(2, 1), 0.5/sqrt(5))
 end
