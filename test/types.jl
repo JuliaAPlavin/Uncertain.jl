@@ -99,6 +99,8 @@ end
     b = 3u"km" ±ᵤ 0.2u"km"
     c = 3.0u"km" ±ᵤ 200u"m"
 
+    @test b === (3 ±ᵤ 0.2)u"km"
+
     @test unit(a) == NoUnits
     @test unit(b) == u"km"
     @test unit(c) == u"m"
@@ -107,9 +109,35 @@ end
     @test ustrip(b) == 3 ±ᵤ 0.2 == a
     @test ustrip(c) == 3e3 ±ᵤ 200
 
+    @test ustrip(NoUnits, a) === a
+    @test ustrip(u"m", b) == 3000 ±ᵤ 200
+    @test ustrip(u"m", c) == 3000 ±ᵤ 200
+
+    @test a |> NoUnits == a
+    @test b |> u"m" == (3000 ±ᵤ 200)u"m"
+    @test c |> u"m" == (3000 ±ᵤ 200)u"m"
+
+    @test zero(a) === 0.0 ±ᵤ 0.0
+    @test zero(b) === (0.0 ±ᵤ 0.0)u"km"
+    @test zero(typeof(a)) === 0.0 ±ᵤ 0.0
+    @test zero(typeof(b)) === (0.0 ±ᵤ 0.0)u"km"
+    @test one(a) === 1.0 ±ᵤ 0.0
+    @test one(b) === 1.0 ±ᵤ 0.0
+    @test one(typeof(a)) === 1.0 ±ᵤ 0.0
+    @test one(typeof(b)) === 1.0 ±ᵤ 0.0
+
     @test b*im === (3.0im)u"km" ±ᵤ 0.2u"km"
     @test 2((1+1im)u"km" ±ᵤ 10u"m") === (2000 + 2000im)u"m" ±ᵤ 20u"m"
 
-    @test_broken a*u"km" == b
-    @test_broken a*1u"km" == b
+    @test a*u"km" == b
+    @test a*(1u"km") == b
+    @test u"km"*a == b
+    @test (1u"km")*a == b
+    
+    @test b*u"m" == (3±ᵤ0.2)u"km*m"
+    @test b*(1u"m") == (3±ᵤ0.2)u"km*m"
+    @test b/u"km" == 3±ᵤ0.2
+    @test b/1u"km" == 3±ᵤ0.2
+    @test u"km"/a == (1/3 ±ᵤ 1/45)u"km"
+    @test 1u"km"/b == 1/3 ±ᵤ 5
 end
