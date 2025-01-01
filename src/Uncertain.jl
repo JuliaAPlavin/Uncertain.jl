@@ -18,7 +18,8 @@ Base.promote_rule(::Type{<:ValueNumber{T1,S1}}, ::Type{<:ValueNumber{T2,S2}}) wh
 Base.promote_rule(::Type{<:ValueAny{T1,S1}}, ::Type{<:ValueAny{T2,S2}}) where {T1,T2,S1,S2} = ValueAny{promote_type(T1, T2), promote_type(S1, S2)}
 
 
-module U
+baremodule U
+export Value, ValueAny, ValueNumber, ValueReal, value, uncertainty, weightedmean
 using ..Uncertain:
     Value, ValueAny, ValueNumber, ValueReal,
     value, uncertainty,
