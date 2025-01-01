@@ -21,13 +21,15 @@ Base.promote_rule(::Type{<:ValueReal{T1,S1}}, ::Type{<:ValueNumber{T2,S2}}) wher
 Base.promote_rule(::Type{<:ValueNumber{T2,S2}}, ::Type{<:ValueReal{T1,S1}}) where {T1,T2,S1,S2} = ValueNumber{promote_type(T1, T2), promote_type(S1, S2)}
 Base.promote_rule(::Type{<:ValueAny{T1,S1}}, ::Type{<:ValueAny{T2,S2}}) where {T1,T2,S1,S2} = ValueAny{promote_type(T1, T2), promote_type(S1, S2)}
 
+nσ(x) = abs(U.value(x)) / U.uncertainty(x)
 
 baremodule U
-export Value, ValueAny, ValueNumber, ValueReal, value, uncertainty, weightedmean
+export Value, ValueAny, ValueNumber, ValueReal, value, uncertainty, nσ, weightedmean, ±
 using ..Uncertain:
     Value, ValueAny, ValueNumber, ValueReal,
-    value, uncertainty,
+    value, uncertainty, nσ,
     weightedmean
+using ..Uncertain: ±ᵤ as ±
 end
 
 

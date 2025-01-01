@@ -16,6 +16,8 @@
     @test zero(a) === U.Value(0, 0.)
 
     @test U.Value(7) === 7 ±ᵤ 0
+    @test U.:±(7, 1) === 7 ±ᵤ 1
+    @test U.nσ(7 ±ᵤ 2) === 3.5
 
     # smoke tests for promotion:
     [2±ᵤ1, 2±ᵤ0.5]
@@ -63,6 +65,7 @@ end
 @testitem "accessing basic numbers" begin
     @test U.value(123) === 123
     @test U.uncertainty(123) === 0
+    @test U.nσ(123) === Inf
 end
 
 @testitem "equality" begin
