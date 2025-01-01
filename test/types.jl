@@ -19,6 +19,11 @@
     @test U.:±(7, 1) === 7 ±ᵤ 1
     @test U.nσ(7 ±ᵤ 2) === 3.5
 
+    @test float(2.0 ±ᵤ 0.25) === 2.0 ±ᵤ 0.25
+    @test float(2f0 ±ᵤ 0.25f0) === 2f0 ±ᵤ 0.25f0
+    @test float(2 ±ᵤ 1) === 2.0 ±ᵤ 1.0
+    @test float(typeof(a)) == U.ValueReal{Float64, Float64}
+
     # smoke tests for promotion:
     [2±ᵤ1, 2±ᵤ0.5]
     [1, 2±ᵤ1, 2±ᵤ0.5]
@@ -38,9 +43,12 @@ end
     @test real(c) === 1 ±ᵤ 0.5
     @test imag(c) === 2 ±ᵤ 0.5
     @test real(typeof(c)) === typeof(real(c))
+
+    @test float(c) === c
+    @test complex(1 ±ᵤ 0.5) === complex(1.0 ±ᵤ 0.5, 0.0 ±ᵤ 0.0)
 end
 
-@testitem "conversions" begin
+@testitem "IntervalSets, Measurements, MCM" begin
     import Measurements as ME
     import MonteCarloMeasurements as MCM
     import IntervalSets as IS

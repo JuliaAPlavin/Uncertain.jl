@@ -51,6 +51,8 @@ end
 value(x::Complex) = Complex(value(x.re), value(x.im))
 uncertainty(x::Complex) = Complex(uncertainty(x.re), uncertainty(x.im))
 
+Base.float(x::Value) = U.Value(float(value(x)), float(uncertainty(x)))
+
 Base.broadcastable(x::Union{ValueNumber,ValueReal}) = Ref(x)
 
 Base.:(==)(a::Value, b::Value) = a.v == b.v && a.u == b.u
