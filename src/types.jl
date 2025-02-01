@@ -44,6 +44,18 @@ end
 (::Type{T})(x::Number) where {T<:Value} = T(convert(valtype(T), x), convert(unctype(T), zero(x)))
 (::Type{T})(x) where {T<:Complex{<:Value}} = T(real(x), imag(x))
 
+"""    value(x)
+
+The nominal value of `x::Value`, or `x` itself if it's not a `Value`.
+"""
+function value end
+
+"""    uncertainty(x)
+
+The uncertainty of `x::Value`, or zero if it's not a `Value`.
+"""
+function uncertainty end
+
 @accessor value(v::Value) = v.v
 @accessor uncertainty(v::Value) = v.u
 @inline value(x) = x
