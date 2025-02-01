@@ -8,6 +8,7 @@ include("types.jl")
 include("show.jl")
 include("maths.jl")
 include("agg.jl")
+include("twosided.jl")
 include("disambiguation.jl")
 
 """    ±ᵤ(val, unc)
@@ -54,7 +55,8 @@ export Value, ValueAny, ValueNumber, ValueReal, value, uncertainty, nσ, weighte
 using ..Uncertain:
     Value, ValueAny, ValueNumber, ValueReal,
     value, uncertainty, nσ,
-    weightedmean
+    weightedmean,
+    TwoSided, width, maxdiff
 using ..Uncertain: ±ᵤ as ±
 end
 
