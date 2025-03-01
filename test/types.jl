@@ -97,6 +97,21 @@ end
     @test U.Value(1 + 2im, 0.1) != Complex(U.Value(1, 0.1), U.Value(2, 0.15))
 end
 
+@testitem "hash" begin
+    @testset for (a, b, p) in [
+        (0 ±ᵤ 0, 0 ±ᵤ 0, ==),
+        (0 ±ᵤ 1, 0 ±ᵤ 1.0, ==),
+        (0 ±ᵤ 1, 1 ±ᵤ 1.0, !=),
+        (0 ±ᵤ 1, 0 ±ᵤ 0, !=),
+        (-0.0 ±ᵤ 1, +0.0 ±ᵤ 1.0, !=),
+        (NaN ±ᵤ 1, NaN ±ᵤ 1.0, ==),
+        ((1+0im) ±ᵤ 1, 1 ±ᵤ 1.0, ==),
+        ((1+2im) ±ᵤ 1, 1 ±ᵤ 1.0, !=),
+    ]
+        @test p(hash(a), hash(b))
+    end
+end
+
 @testitem "broadcast" begin
     @test U.Value(1, 0.1) .+ [1, 2, 3] == U.Value.([2, 3, 4], 0.1)
 end
