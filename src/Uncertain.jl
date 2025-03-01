@@ -56,7 +56,7 @@ using ..Uncertain:
     Value, ValueAny, ValueNumber, ValueReal,
     value, uncertainty, nσ,
     weightedmean,
-    TwoSided, width, maxdiff
+    TwoSided, width, maxdiff, reverse
 using ..Uncertain: ±ᵤ as ±
 end
 

@@ -43,6 +43,10 @@ maxdiff(a::TwoSided) = max(a.lo, a.hi)
 Base.convert(::Type{T}, u::Number) where {T <: TwoSided} = T(u, u)
 
 
+reverse(u::Number) = u
+reverse(u::TwoSided) = TwoSided(u.hi, u.lo)
+
+
 _u_lo(u::Number) = u
 _u_lo(u::TwoSided) = u.lo
 _u_hi(u::Number) = u
