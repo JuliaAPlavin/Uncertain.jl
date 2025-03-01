@@ -49,9 +49,9 @@ Base.isapprox(a::TwoSided, b::TwoSided; kwargs...) = isapprox(a.lo, b.lo; kwargs
 reverse(u::Number) = u
 reverse(u::TwoSided) = TwoSided(u.hi, u.lo)
 
-add(a::Number, b::TwoSided) = @modify(p -> a + p, b[∗ₚ])
-add(a::TwoSided, b::Number) = @modify(p -> p + b, a[∗ₚ])
-add(a::TwoSided, b::TwoSided) = TwoSided(a.lo + b.lo, a.hi + b.hi)
+# add(a::Number, b::TwoSided) = @modify(p -> a + p, b[∗ₚ])
+# add(a::TwoSided, b::Number) = @modify(p -> p + b, a[∗ₚ])
+# add(a::TwoSided, b::TwoSided) = TwoSided(a.lo + b.lo, a.hi + b.hi)
 
 
 _u_lo(u::Number) = u

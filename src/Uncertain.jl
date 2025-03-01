@@ -49,7 +49,11 @@ function maxdiff end
 width(a::Number) = 2a
 maxdiff(a::Number) = a
 
-add(a::Number, b::Number) = a + b
+function add end
+# add(a::Number, b::Number) = a + b
+
+# like sign(), but always +-1 and always an Int
+_sign1i(x) = x < zero(x) ? -1 : 1
 
 
 baremodule U
