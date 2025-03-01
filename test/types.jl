@@ -72,12 +72,6 @@ end
     @test U.Value(IS.Interval(0.5, 1.5)) === 1 ±ᵤ 0.5
 end
 
-@testitem "accessing basic numbers" begin
-    @test U.value(123) === 123
-    @test U.uncertainty(123) === 0
-    @test U.nσ(123) === Inf
-end
-
 @testitem "equality" begin
     @test U.Value(1, 0) == 1
     @test U.Value(1, 0.1) != 1
@@ -148,4 +142,27 @@ end
     @test b/1u"km" == 3±ᵤ0.2
     @test u"km"/a == (1/3 ±ᵤ 1/45)u"km"
     @test 1u"km"/b == 1/3 ±ᵤ 5
+end
+
+@testitem "accessing values without uncertainty" begin
+    using Unitful
+    using Accessors
+
+    @test U.value(123) === 123
+    @test U.uncertainty(123) === 0
+    @test U.nσ(123) === Inf
+    @test (@set U.value(123) = 456) === 456
+
+    @test U.value(123 + 456im) === 123 + 456im
+    @test U.uncertainty(123 + 456im) === 0
+    @test U.nσ(123 + 456im) === Inf
+    @test (@set U.value(123 + 456im) = 789 + 1011im) === 789 + 1011im
+
+    @test U.value(123u"m") === 123u"m"
+    @test U.uncertainty(123u"m") === 0u"m"
+    @test U.nσ(123u"m") === Inf
+
+    @test U.value((123 + 456im)u"m") === (123 + 456im)u"m"
+    @test U.uncertainty((123 + 456im)u"m") === 0u"m"
+    @test U.nσ((123 + 456im)u"m") === Inf
 end

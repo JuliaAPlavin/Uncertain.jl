@@ -58,10 +58,10 @@ function uncertainty end
 
 @accessor value(v::Value) = v.v
 @accessor uncertainty(v::Value) = v.u
-@inline value(x) = x
-@inline uncertainty(x) = zero(x)
-value(x::Complex) = Complex(value(x.re), value(x.im))
-uncertainty(x::Complex) = Complex(uncertainty(x.re), uncertainty(x.im))
+@accessor value(x) = x
+uncertainty(x) = zero(real(x))
+value(x::Complex{<:Value}) = Complex(value(x.re), value(x.im))
+uncertainty(x::Complex{<:Value}) = Complex(uncertainty(x.re), uncertainty(x.im))
 
 Base.float(::Type{V}) where {V<:Value} = ValueReal{float(valtype(V)), float(unctype(V))}
 Base.float(x::Value) = U.Value(float(value(x)), float(uncertainty(x)))

@@ -23,7 +23,7 @@ PrintfExt = "Printf"
 UnitfulExt = "Unitful"
 
 [compat]
-Accessors = "0.1.39"
+Accessors = "0.1.42"
 IntervalSets = "0.7"
 Makie = "0.21.17, 0.22"
 Measurements = "2.11.0"
