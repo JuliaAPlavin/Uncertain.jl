@@ -7,6 +7,7 @@ version = "0.1.6"
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
 
 [weakdeps]
+FlexiJoins = "e37f2e79-19fa-4eb7-8510-b63b51fe0a37"
 IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 Measurements = "eff96d63-e80a-5855-80a2-b1b0885c5ab7"
@@ -15,6 +16,7 @@ Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [extensions]
+FlexiJoinsExt = "FlexiJoins"
 IntervalSetsExt = "IntervalSets"
 MakieExt = "Makie"
 MeasurementsExt = "Measurements"
@@ -24,6 +26,7 @@ UnitfulExt = "Unitful"
 
 [compat]
 Accessors = "0.1.42"
+FlexiJoins = "0.1.34"
 IntervalSets = "0.7"
 Makie = "0.21.17, 0.22"
 Measurements = "2.11.0"

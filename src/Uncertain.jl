@@ -57,6 +57,9 @@ function add end
 _sign1i(x) = x < zero(x) ? -1 : 1
 
 
+function by_uncertainty end
+
+
 baremodule U
 export Value, ValueAny, ValueNumber, ValueReal, value, uncertainty, nσ, weightedmean, ±
 using ..Uncertain:
@@ -64,7 +67,8 @@ using ..Uncertain:
     UncertaintyTransformation, UncertaintyTransformationF, LinearAdd,
     value, uncertainty, nσ,
     weightedmean,
-    TwoSided, width, maxdiff, reverse, add
+    TwoSided, width, maxdiff, reverse, add,
+    by_uncertainty
 using ..Uncertain: ±ᵤ as ±
 end
 
