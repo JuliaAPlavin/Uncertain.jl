@@ -93,6 +93,8 @@ julia> x * y  # Works exactly the same ⚡
 
 ## Relation to other uncertainty packages 📈
 
+**TLDR**: `Uncertain.jl` prioritizes performance over correlation handling. Use `Measurements.jl` or `MonteCarloMeasurements.jl` if you need to track correlations; use `Uncertain.jl` for large datasets where you can assume uncertainties are independent.
+
 The fundamental design difference of `Uncertain.jl`, compared to other Julia packages in this field like `Measurements.jl` and `MonteCarloMeasurements.jl`, is low overhead. 🚄 It handles large datasets of values with uncertainties. They occupy only 2x more memory than regular values, and have a performance overhead of only a factor of a few.
 ```julia
 julia> n = 10^6
