@@ -32,3 +32,29 @@
     hspan(1±ᵤ0.1)
     vspan(1±ᵤ0.1)
 end
+
+@testitem "mcm makie" begin
+    using Makie
+    using MonteCarloMeasurements
+    using MonteCarloMeasurements.StaticArrays
+    # smoke tests only for now
+
+    p = Particles([1,2,3])
+    hist(p)
+    stephist(p)
+    
+    scatter([p], [p])
+    scatter([1], [p])
+    scatter([p], [1])
+
+    band([1], [p])
+    band([p], [p])
+
+    scatter([(p, p)])
+    scatter([(1, p)])
+    scatter([(p, 1)])
+    scatter([SVector(p, p)])
+    band([(1, p)])
+    band([(p, p)])
+    band([SVector(p, p)])
+end
