@@ -1,7 +1,7 @@
 # Uncertain.jl 📊
 
 > [!IMPORTANT]
-> ⚡ Handle uncertain values with ease and high performance! 🚀
+> Handle uncertain values with ease and high performance! 🚀
 
 A Julia package for representing and propagating uncertainties through calculations with minimal overhead. Designed with composability and speed in mind, applicable to large datasets of uncertain values.
 
@@ -38,14 +38,36 @@ julia> x + y  # Automatic error propagation ✨
 3.5 ± 0.22360679774997896
 ```
 
+## Plotting 📊
+
+`Uncertain.jl` provides Makie integration for visualizing uncertain values. You can pass uncertain values directly to plotting functions:
+
+```julia
+using Uncertain, GLMakie
+
+# Create some data with uncertainties
+x = 1:10
+y = [i + 0.5*randn() ±ᵤ (0.1 + 0.05*i) for i in x]
+
+# Plot with automatic uncertainty handling
+scatter(x, y)
+rangebars(x, y)
+lines(x, y)
+band(x, y)
+```
+
+![Uncertain Values Plotting Example](docs/uncertain_single_axis_plot.png)
+
+The plotting functions `scatter()`, `rangebars()`, `lines()`, and `band()` (and others where it makes sense) work directly with uncertain values, automatically extracting the necessary components for visualization.
+
 ## Scope 🎯
 
-The ultimate goal of `Uncertain.jl` is to support arbitrary uncertainty specifications – asymmetric errors, intervals, more complex distributions, and go beyond plain numbers. All within a single uniform interface. 🌈
+The ultimate goal of `Uncertain.jl` is to support arbitrary uncertainty specifications – asymmetric errors, intervals, more complex distributions, and to go beyond plain numbers. All within a single uniform interface. 🌈
 
-Currently, aside from plain numbers, `Uncertain` provides the `U.TwoSided(lo, hi)` objects to represent asymmetric two-sided uncertainties. The companion `UncertainSkyCoords.jl` package provides uncertainties specific to `SkyCoords.jl` objects – basically, sky regions with different shapes. These types do not support _all_ operations where error propagation would make sense yet; reports and suggestions on specific missing operations are welcome!
+Currently, aside from plain numbers, `Uncertain` provides the `U.TwoSided(lo, hi)` objects to represent asymmetric two-sided uncertainties. The companion `UncertainSkyCoords.jl` package provides uncertainties specific to `SkyCoords.jl` objects – essentially, sky regions with different shapes. These types do not support _all_ operations where error propagation would make sense yet; reports and suggestions on specific missing operations are welcome!
 
 Furthermore, `Uncertain.jl` provides integrations with other parts of the Julia ecosystem: 🔗
-- 📊 Plotting with `Makie` – you should be able to pass uncertain values to any recipe where it makes sense
+- 📊 Plotting with `Makie` – you can pass uncertain values to any recipe where it makes sense
 - 🔄 Conversions to and from `IntervalSets.jl`, `Measurements.jl` and `MonteCarloMeasurements.jl` objects for ease of interoperability
 - 📐 `Uncertain.Value`s with `Unitful.jl` quantities inside them support the `Unitful.jl` interface
 
@@ -71,7 +93,7 @@ julia> x * y  # Works exactly the same ⚡
 
 ## Relation to other uncertainty packages 📈
 
-The fundamental design difference of `Uncertain.jl`, compared to other Julia packages in this field like `Measurements.jl` and `MonteCarloMeasurements.jl`, is low overhead. 🚄 It handles huge datasets of values with uncertainties. They occupy only 2x more memory than regular values, and have a performance overhead of only a factor of a few.
+The fundamental design difference of `Uncertain.jl`, compared to other Julia packages in this field like `Measurements.jl` and `MonteCarloMeasurements.jl`, is low overhead. 🚄 It handles large datasets of values with uncertainties. They occupy only 2x more memory than regular values, and have a performance overhead of only a factor of a few.
 ```julia
 julia> n = 10^6
 julia> x = rand(n)
@@ -89,9 +111,9 @@ julia> @b x .+ 1
 julia> @b xu .+ 1
 1.201 ms (4 allocs: 15.259 MiB)
 ```
-Other packages tend to have orders-of-magnitude overhead: `Measurements.jl` because they handle linear correlations, and `MonteCarloMeasurements.jl` because they use Monte-Carlo samples to represent uncertainties. 📊
+Other packages tend to have orders-of-magnitude overhead: `Measurements.jl` because it handles linear correlations, and `MonteCarloMeasurements.jl` because it uses Monte Carlo samples to represent uncertainties. 📊
 
-Those other packages have a much higher performance overhead, but they certainly have advantages over `Uncertain.jl`. ⚖️ In particular, here we only handle operations on independent uncertain values. All functions that involve only one uncertain number like `exp(x::Uncertain.Value)` or `x::Uncertain.Value + y::Float64` are automatically correct as there are no dependencies possible. Computing multivariate functions like `x::Uncertain.Value + y::Uncertain.Value` correctly requires accounting for correlations in the general case; we do not do that here. We have a flag one can set to control whether to assume independent values, or fail on these operations: 🛠️
+Those other packages have much higher performance overhead, but they certainly have advantages over `Uncertain.jl`. ⚖️ In particular, here we only handle operations on independent uncertain values. All functions that involve only one uncertain number like `exp(x::Uncertain.Value)` or `x::Uncertain.Value + y::Float64` are automatically correct as there are no dependencies possible. Computing multivariate functions like `x::Uncertain.Value + y::Uncertain.Value` correctly requires accounting for correlations in the general case; we do not do that here. We have a flag one can set to control whether to assume independent values, or fail on these operations: 🛠️
 ```julia
 julia> Uncertain.assume_independent() = false
 
@@ -108,4 +130,4 @@ julia> x + y
 3.0 ± 0.5099019513592785
 ```
 
-Naturally, the choice of which package to use is different in different scenarios. 🎯 `Uncertain.jl` values can easily be converted back and forth to corresponding objects of other packages, making the interoperability more straightforward. 🔄
+Naturally, the choice of which package to use differs in different scenarios. 🎯 `Uncertain.jl` values can easily be converted back and forth to corresponding objects of other packages, making interoperability more straightforward. 🔄
