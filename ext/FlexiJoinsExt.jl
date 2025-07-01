@@ -13,7 +13,7 @@ ByUncertainty{TL, TR}(f_L, f_R) where {TL, TR} = ByUncertainty{TL, TR, typeof(f_
 
 ConstructionBase.constructorof(::Type{<:ByUncertainty{TL,TR}}) where {TL, TR} = ByUncertainty{TL,TR}
 
-Uncertain.by_uncertainty(f_L, f_R) = ByUncertainty{Any,Any}(f_L, f_R)
+Uncertain.by_uncertainty(f_L, f_R=f_L) = ByUncertainty{Any,Any}(f_L, f_R)
 
 
 function FlexiJoins.normalize_arg(cond::ByUncertainty{Any,Any}, datas)
