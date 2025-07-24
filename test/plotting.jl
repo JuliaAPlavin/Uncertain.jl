@@ -27,8 +27,8 @@
     vlines(1±ᵤ0.1)
 
     # these two require https://github.com/MakieOrg/Makie.jl/pull/5036
-    @test_broken hspan([1±ᵤ0.1, 2±ᵤ0.3])
-    @test_broken vspan([1±ᵤ0.1, 2±ᵤ0.3])
+    hspan([1±ᵤ0.1, 2±ᵤ0.3])
+    vspan([1±ᵤ0.1, 2±ᵤ0.3])
     hspan(1±ᵤ0.1)
     vspan(1±ᵤ0.1)
 end
