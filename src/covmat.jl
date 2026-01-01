@@ -15,3 +15,4 @@ Base.isapprox(x::CovMat, y::CovMat; kwargs...) = isapprox(x.cov, y.cov; kwargs..
 propagate(::typeof(+), a::AbstractVector, aunc::CovMat, b::AbstractVector, bunc::CovMat) = Value(a + b, CovMat(aunc.cov + bunc.cov))
 propagate(::typeof(-), a::AbstractVector, aunc::CovMat, b::AbstractVector, bunc::CovMat) = Value(a - b, CovMat(aunc.cov + bunc.cov))
 propagate(::typeof(*), A::AbstractMatrix, Aunc::Nothing, x::AbstractVector, xunc::CovMat) = (A*x) ±ᵤ CovMat(Symmetric(A * xunc.cov * A'))
+propagate(::typeof(getindex), v::AbstractVector, vunc::CovMat, i::Int, iunc::Nothing) = Value(v[i], √vunc.cov[i, i])

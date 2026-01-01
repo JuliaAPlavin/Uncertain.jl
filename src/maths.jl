@@ -155,3 +155,6 @@ end
 
 Base.deg2rad(a::Value) = Value(deg2rad(_v(a)), deg2rad(_Δ(a)))
 Base.rad2deg(a::Value) = Value(rad2deg(_v(a)), rad2deg(_Δ(a)))
+
+
+Base.getindex(v::Value, i::Int) = propagate(getindex, _v(v), _Δ(v), i, nothing)

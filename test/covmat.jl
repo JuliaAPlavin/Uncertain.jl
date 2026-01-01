@@ -84,6 +84,8 @@ end
     v_corr = [1, 3] ±ᵤ U.CovMat(σx=0.1, σy=0.2, ρ=1)
     @test U.nσ(v_corr) ≈ Inf
     @test dot(v_corr, [1, 1]) ≈ 4 ±ᵤ 0.3
+    @test v_corr[1] ≈ 1 ±ᵤ 0.1
+    @test v_corr[2] ≈ 3 ±ᵤ 0.2
 
     # norm propagation
     v2 = [3, 4] ±ᵤ U.CovMat(σx=0.3, σy=0.3, ρ=0)
