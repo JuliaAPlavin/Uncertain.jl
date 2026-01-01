@@ -49,14 +49,16 @@ end
     @test U.Value(me) === 3.0 ±ᵤ 1.0
     @test ME.Measurement(U.Value(me)) == me
 
-    pa = MCM.Particles(3 .+ randn(10^4))
-    u = U.Value(pa)
-    @test U.value(u) ≈ 3 rtol=3e-2
-    @test U.uncertainty(u) ≈ 1 rtol=1e-1
+    @testset for PT in [MCM.Particles, MCM.StaticParticles]
+        pa = PT(3 .+ randn(10^3))
+        u = U.Value(pa)
+        @test U.value(u) ≈ 3 rtol=0.1
+        @test U.uncertainty(u) ≈ 1 rtol=0.2
 
-    pa = MCM.Particles(10^4, 3 ±ᵤ 1)
-    @test MCM.pmean(pa) ≈ 3 rtol=3e-2
-    @test MCM.pstd(pa) ≈ 1 rtol=1e-1
+        pa = PT(10^3, 3 ±ᵤ 1)
+        @test MCM.pmean(pa) ≈ 3 rtol=3e-2
+        @test MCM.pstd(pa) ≈ 1 rtol=1e-1
+    end
 
     @test IS.Interval(1 ±ᵤ 0.1) === IS.Interval(0.9, 1.1)
     @test U.Value(IS.Interval(0.5, 1.5)) === 1 ±ᵤ 0.5

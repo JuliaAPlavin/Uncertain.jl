@@ -22,7 +22,6 @@ end
 @testitem "_" begin
     import Aqua
     Aqua.test_all(Uncertain; ambiguities=(;broken=true))
-    # Aqua.test_ambiguities(Uncertain)
 
     import CompatHelperLocal as CHL
     CHL.@check()
