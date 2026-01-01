@@ -19,5 +19,7 @@
         innerjoin((;A, B), U.by_uncertainty(identity, identity); mode=FlexiJoins.Mode.NestedLoop(), loop_over_side=:B),
         J
     )
+    J = innerjoin((;A=map(tuple, A), B), U.by_uncertainty(only, identity); mode=FlexiJoins.Mode.NestedLoop())
+    J = innerjoin((;A=map(tuple, A), B=map(tuple, B)), U.by_uncertainty(only, only); mode=FlexiJoins.Mode.NestedLoop())
     # @test issetequal(innerjoin((;A, B), U.by_uncertainty(identity, identity)), J)
 end
