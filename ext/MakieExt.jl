@@ -27,5 +27,9 @@ convert_arguments(ct::Type{<:Errorbars}, x::AbstractVector{<:U.Value}, y::Abstra
 convert_arguments(ct::Type{<:Errorbars}, x::AbstractVector{<:U.Value}, y::AbstractVector{<:U.Value}) = convert_arguments(ct, U.value.(x), U.value.(y), U.uncertainty.(y))
 
 convert_arguments(ct::Type{<:Union{HLines,VLines}}, x::AbstractVector{<:U.Value}) = convert_arguments(ct, U.value.(x))
+convert_arguments(ct::Type{<:Union{HLines,VLines}}, x::U.Value) = convert_arguments(ct, U.value(x))
+
+convert_arguments(ct::Type{<:Union{HSpan,VSpan}}, x::AbstractVector{<:U.Value}) = convert_arguments(ct, Interval.(x))
+convert_arguments(ct::Type{<:Union{HSpan,VSpan}}, x::U.Value) = convert_arguments(ct, Interval(x))
 
 end
