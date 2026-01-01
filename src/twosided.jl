@@ -23,3 +23,5 @@ end
 
 width(a::TwoSided) = a.lo + a.hi
 maxdiff(a::TwoSided) = max(a.lo, a.hi)
+
+Base.convert(::Type{T}, u::Number) where {T <: TwoSided} = T(u, u)
