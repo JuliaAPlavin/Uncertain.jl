@@ -3,6 +3,7 @@ module UnitfulExt
 using Unitful
 using Uncertain
 
+Uncertain._ustrip(x::U.Value) = ustrip(x)
 Unitful.unit(x::U.Value) = unit(U.value(x))
 Unitful.ustrip(x::U.Value) = ustrip(unit(x), x)
 Unitful.ustrip(u::Unitful.Units, x::U.Value) = U.Value(ustrip(u, U.value(x)), ustrip(u, U.uncertainty(x)))
@@ -31,5 +32,10 @@ Unitful.uconvert(u, e::U.CovMat) = U.CovMat(uconvert.(u^2, e.cov))
 Base.:*(mul::Unitful.FreeUnits, e::U.CovMat) = U.CovMat(mul^2 * e.cov)
 Base.:*(e::U.CovMat, mul::Unitful.FreeUnits) = U.CovMat(e.cov * mul^2)
 Base.:/(e::U.CovMat, mul::Unitful.FreeUnits) = U.CovMat(e.cov / mul^2)
+
+
+# XXX: piracy, should be upstreamed
+Unitful.unit(x::AbstractVector) = unit(eltype(x))
+Unitful.uconvert(u::Unitful.Units, x::AbstractVector) = uconvert.(u, x)
 
 end

@@ -17,6 +17,7 @@
 
     @test norm(2*v1) ≈ 6 ±ᵤ 0.2
     @test dot(v1*u"m", [2]) ≈ 6u"m" ±ᵤ 0.2u"m"
+    @test U.nσ(v1*u"m") ≈ 30
 end
 
 @testitem "CovMat 2d along one axis" begin
@@ -63,13 +64,14 @@ end
     # uncorrelated case: σ of dot product is |y| * σ
     v = [1, 0] ±ᵤ U.CovMat(σx=0.1, σy=0.2, ρ=0)
     @test U.nσ(v) ≈ 10
+    @test U.nσ(v*u"km") ≈ 10
     @test dot(v, [1, 0]) ≈ 1 ±ᵤ 0.1
     @test dot(v, [0, -1]) ≈ 0 ±ᵤ 0.2
     @test dot(v, [3, 4]) ≈ 3 ±ᵤ hypot(3*0.1, 4*0.2)
     @test dot(v, [3, -4]) ≈ 3 ±ᵤ hypot(3*0.1, 4*0.2)
     @test dot(2v, [3, 4]) ≈ 6 ±ᵤ 2*hypot(3*0.1, 4*0.2)
     @test dot(v*u"m", [3, 4]) ≈ (3 ±ᵤ hypot(3*0.1, 4*0.2))u"m"
-    @test_broken dot(NoUnits(v*u"m"/u"cm"), [3, 4]) ≈ 300 ±ᵤ 100*hypot(3*0.1, 4*0.2)
+    @test dot(NoUnits(v*u"m"/u"cm"), [3, 4]) ≈ 300 ±ᵤ 100*hypot(3*0.1, 4*0.2)
 
     # fully correlated case:
     v_corr = [1, 3] ±ᵤ U.CovMat(σx=0.1, σy=0.2, ρ=1)
