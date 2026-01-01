@@ -61,7 +61,7 @@ baremodule U
 export Value, ValueAny, ValueNumber, ValueReal, value, uncertainty, nσ, weightedmean, ±
 using ..Uncertain:
     Value, ValueAny, ValueNumber, ValueReal,
-    UncertaintyTransformation, LinearAdd,
+    UncertaintyTransformation, UncertaintyTransformationF, LinearAdd,
     value, uncertainty, nσ,
     weightedmean,
     TwoSided, width, maxdiff, reverse, add
