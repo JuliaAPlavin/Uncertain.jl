@@ -9,6 +9,7 @@ include("show.jl")
 include("maths.jl")
 include("agg.jl")
 include("twosided.jl")
+include("uncertainty_transformations.jl")
 include("disambiguation.jl")
 
 """    ±ᵤ(val, unc)
@@ -60,6 +61,7 @@ baremodule U
 export Value, ValueAny, ValueNumber, ValueReal, value, uncertainty, nσ, weightedmean, ±
 using ..Uncertain:
     Value, ValueAny, ValueNumber, ValueReal,
+    UncertaintyTransformation, LinearAdd,
     value, uncertainty, nσ,
     weightedmean,
     TwoSided, width, maxdiff, reverse, add
