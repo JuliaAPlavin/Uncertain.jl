@@ -20,13 +20,15 @@ Base.oneunit(v::V) where {V<:Value} = Value(oneunit(U.value(v)), zero(U.uncertai
 # useful for multiplying the derivative by the argument uncertainty, to avoid Infs and NaNs when the uncertainty is zero
 *₀(a, b) = iszero(b) ? zero(a*b) : a*b
 
-Base.:+(a::Value, b::Value) = (require(+, assume_independent); Value(_v(a) + _v(b), hypot(_Δ(a), _Δ(b))))
 Base.:+(a::Value, b::Number) = Value(_v(a) + _v(b), _Δ(a))
 Base.:+(a::Number, b::Value) = Value(_v(a) + _v(b), _Δ(b))
-
-Base.:-(a::Value, b::Value) = (require(-, assume_independent); Value(_v(a) - _v(b), hypot(_Δ(a), _Δ(b))))
 Base.:-(a::Value, b::Number) = Value(_v(a) - _v(b), _Δ(a))
 Base.:-(a::Number, b::Value) = Value(_v(a) - _v(b), _Δ(b))
+
+Base.:+(a::Value, b::Value) = (require(+, assume_independent); propagate(+, _v(a), _Δ(a), _v(b), _Δ(b)))
+Base.:-(a::Value, b::Value) = (require(-, assume_independent); propagate(-, _v(a), _Δ(a), _v(b), _Δ(b)))
+propagate(::typeof(+), a::Number, aunc::Number, b::Number, bunc::Number) = Value(a + b, hypot(aunc, bunc))
+propagate(::typeof(-), a::Number, aunc::Number, b::Number, bunc::Number) = Value(a - b, hypot(aunc, bunc))
 
 Base.:-(a::Value) = Value(-_v(a), _Δ(a))
 

@@ -18,6 +18,9 @@
     @test norm(2*v1) ≈ 6 ±ᵤ 0.2
     @test dot(v1*u"m", [2]) ≈ 6u"m" ±ᵤ 0.2u"m"
     @test U.nσ(v1*u"m") ≈ 30
+
+    @test v1 + v1neg ≈ [-1] ±ᵤ U.CovMat(σ=hypot(0.1, 0.2))
+    @test v1 - v1neg ≈ [7] ±ᵤ U.CovMat(σ=hypot(0.1, 0.2))
 end
 
 @testitem "CovMat 2d along one axis" begin
