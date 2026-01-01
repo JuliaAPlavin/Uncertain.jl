@@ -9,6 +9,13 @@ require(f, ::typeof(assume_independent)) =
 const _v = value
 const _Δ = uncertainty
 
+Base.zero(::Type{V}) where {T,S,V<:Value{T,S}} = V(zero(T), zero(S))
+Base.zero(v::V) where {V<:Value} = V(zero(U.value(v)), zero(U.uncertainty(v)))
+Base.one(::Type{V}) where {T,S,V<:Value{T,S}} = Value(one(T), zero(one(S)))
+Base.one(v::V) where {V<:Value} = Value(one(U.value(v)), zero(one(U.uncertainty(v))))
+Base.oneunit(::Type{V}) where {T,S,V<:Value{T,S}} = Value(oneunit(T), zero(S))
+Base.oneunit(v::V) where {V<:Value} = Value(oneunit(U.value(v)), zero(U.uncertainty(v)))
+
 # multiplication with the "strong zero" treatment of the 2nd argument
 # useful for multiplying the derivative by the argument uncertainty, to avoid Infs and NaNs when the uncertainty is zero
 *₀(a, b) = iszero(b) ? zero(a*b) : a*b
