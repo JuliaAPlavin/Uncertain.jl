@@ -135,6 +135,7 @@ for T in [:Value, :Number, :Rational, :Real, :AbstractFloat]
     @eval Base.isequal(a::Value, b::$T) = isequal(_v(a), _v(b)) && _Δ(a) == _Δ(b)
     T != :Value && @eval Base.isequal(a::$T, b::Value) = isequal(_v(a), _v(b)) && _Δ(a) == _Δ(b)
 end
+Base.hash(v::Value, h::UInt) = hash(_v(v), hash(_Δ(v), hash(Uncertain, h)))
 
 # same code as for AbstractFloats in Base
 Base.min(x::Value, y::Value) = isnan(x) || ~isnan(y) && isless(x, y) ? x : y
