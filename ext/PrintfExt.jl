@@ -17,7 +17,6 @@ end
 
 function Printf.fmt(buf, pos, arg::U.Value, spec::Printf.Spec{<:Printf.Floats})
     pos = Printf.fmt(buf, pos, U.value(arg), spec)
-    @info "" length(buf)
     buf[pos:pos+ncodeunits(VAL_UNC_SEPARATOR)-1] .= codeunits(VAL_UNC_SEPARATOR)
     pos += ncodeunits(VAL_UNC_SEPARATOR)
     pos = Printf.fmt(buf, pos, U.uncertainty(arg), spec)
