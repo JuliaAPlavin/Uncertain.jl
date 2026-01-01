@@ -24,4 +24,12 @@ for f in [:*, :/]
     @eval Base.$f(y::Unitful.Quantity, x::U.Value) = U.Value($f(y, U.value(x)), $f(y, U.uncertainty(x)))
 end
 
+
+Unitful.ustrip(u::Unitful.Units, e::U.CovMat) = U.CovMat(ustrip.(u^2, e.cov))
+Unitful.uconvert(u, e::U.CovMat) = U.CovMat(uconvert.(u^2, e.cov))
+
+Base.:*(mul::Unitful.FreeUnits, e::U.CovMat) = U.CovMat(mul^2 * e.cov)
+Base.:*(e::U.CovMat, mul::Unitful.FreeUnits) = U.CovMat(e.cov * mul^2)
+Base.:/(e::U.CovMat, mul::Unitful.FreeUnits) = U.CovMat(e.cov / mul^2)
+
 end

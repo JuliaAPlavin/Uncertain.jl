@@ -3,12 +3,14 @@ module Uncertain
 export U, ±ᵤ
 
 using Accessors
+using LinearAlgebra: dot, pinv
 
 include("types.jl")
 include("show.jl")
 include("maths.jl")
 include("agg.jl")
 include("twosided.jl")
+include("covmat.jl")
 include("uncertainty_transformations.jl")
 include("disambiguation.jl")
 
@@ -31,8 +33,16 @@ Base.promote_rule(::Type{<:ValueAny{T1,S1}}, ::Type{<:ValueAny{T2,S2}}) where {T
 
 How many uncertainties `x` is away from zero. For numeric values, this is `abs(U.value(x)) / U.uncertainty(x)`.
 """
-nσ(x::U.Value) = nσ(value(x), uncertainty(x))
+nσ(x::Value) = nσ(value(x), uncertainty(x))
 nσ(val::Number, unc::Number) = abs(val) / unc
+function nσ(val::AbstractVector, unc::CovMat)
+    cov = unc.cov
+    Pv = pinv(cov) * val
+    result = √dot(val, Pv)
+    # check if val has component in null space (zero uncertainty direction)
+    cov * Pv ≈ val || return oftype(result, Inf)
+    return result
+end
 
 """    width(uncertainty)
 
@@ -69,9 +79,14 @@ using ..Uncertain:
     value, uncertainty, nσ,
     weightedmean,
     TwoSided, width, maxdiff, reverse, add,
+    CovMat,
     by_uncertainty
 using ..Uncertain: ±ᵤ as ±
 end
+
+
+# in 1.10, cannot have multiple stdlib extensions:
+include("../ext/LinearAlgebraExt.jl")
 
 
 end
