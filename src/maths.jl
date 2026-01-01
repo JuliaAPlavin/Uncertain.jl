@@ -124,18 +124,21 @@ Base.abs(x::Value) = Value(abs(_v(x)), _Δ(x))
 Base.abs2(x::Value) = Value(abs2(_v(x)), 2 * abs(_v(x)) *₀ _Δ(x))
 Base.angle(x::Value) = Value(angle(_v(x)), _Δ(x)/abs(_v(x)))
 
-for f in [:<, :isless, :isequal]
+for f in [:<, :isless]
     for T in [:Value, :Number, :Rational, :Real, :AbstractFloat]
         @eval Base.$f(a::Value, b::$T) = $f(_v(a), _v(b))
         T != :Value && @eval Base.$f(a::$T, b::Value) = $f(_v(a), _v(b))
     end
 end
 
-for T in [:Value] # , :Number, :Rational, :Real, :AbstractFloat]
-    # same code as for AbstractFloats in Base
-    Base.min(x::Value, y::Value) = isnan(x) || ~isnan(y) && isless(x, y) ? x : y
-    Base.max(x::Value, y::Value) = isnan(x) || ~isnan(y) && isless(y, x) ? x : y
+for T in [:Value, :Number, :Rational, :Real, :AbstractFloat]
+    @eval Base.isequal(a::Value, b::$T) = isequal(_v(a), _v(b)) && _Δ(a) == _Δ(b)
+    T != :Value && @eval Base.isequal(a::$T, b::Value) = isequal(_v(a), _v(b)) && _Δ(a) == _Δ(b)
 end
+
+# same code as for AbstractFloats in Base
+Base.min(x::Value, y::Value) = isnan(x) || ~isnan(y) && isless(x, y) ? x : y
+Base.max(x::Value, y::Value) = isnan(x) || ~isnan(y) && isless(y, x) ? x : y
 
 for f in [:isnan, :isfinite]
     @eval Base.$f(x::Value) = $f(_v(x))

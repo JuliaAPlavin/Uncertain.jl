@@ -73,10 +73,17 @@ end
 end
 
 @testitem "equality" begin
-    @test U.Value(1, 0) == 1
-    @test U.Value(1, 0.1) != 1
-    @test U.Value(1, 0.5) == U.Value(1f0, 0.5f0)
-    @test U.Value(1, 0.1) != U.Value(1, 0.15)
+    @testset for f in [==, isequal]
+        @test f(U.Value(1, 0), 1)
+        @test !f(U.Value(1, 0.1), 1)
+        @test f(U.Value(1, 0.5), U.Value(1f0, 0.5f0))
+        @test !f(U.Value(1, 0.1), U.Value(1, 0.15))
+    end
+
+    @test U.Value(+0.0, 0.1) == U.Value(-0.0, 0.1)
+    @test !isequal(U.Value(+0.0, 0.1), U.Value(-0.0, 0.1))
+    @test U.Value(NaN, 0.1) != U.Value(NaN, 0.1)
+    @test isequal(U.Value(NaN, 0.1), U.Value(NaN, 0.1))
 
     @test U.Value(1 + 2im, 0) == 1 + 2im
     @test Complex(U.Value(1, 0), U.Value(2, 0)) == 1 + 2im
