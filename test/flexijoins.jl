@@ -1,5 +1,8 @@
 @testitem "xxx" begin
     using FlexiJoins
+    using Uncertain: setproperties
+
+    @test setproperties(U.by_uncertainty(identity, identity), f_L=first) === U.by_uncertainty(first, identity)
 
     A = [1, 2, 3, 6, 7]
     B = [0±ᵤ0.1, 1±ᵤ0.1, 2±ᵤ1, 3±ᵤ3.5]

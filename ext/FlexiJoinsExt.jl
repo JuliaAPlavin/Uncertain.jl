@@ -2,6 +2,7 @@ module FlexiJoinsExt
 
 using FlexiJoins: FlexiJoins
 using Uncertain
+using Uncertain.Accessors: ConstructionBase
 
 struct ByUncertainty{TL, TR, TFL, TFR} <: FlexiJoins.JoinCondition
     f_L::TFL
@@ -9,6 +10,8 @@ struct ByUncertainty{TL, TR, TFL, TFR} <: FlexiJoins.JoinCondition
 end
 
 ByUncertainty{TL, TR}(f_L, f_R) where {TL, TR} = ByUncertainty{TL, TR, typeof(f_L), typeof(f_R)}(f_L, f_R)
+
+ConstructionBase.constructorof(::Type{<:ByUncertainty{TL,TR}}) where {TL, TR} = ByUncertainty{TL,TR}
 
 Uncertain.by_uncertainty(f_L, f_R) = ByUncertainty{Any,Any}(f_L, f_R)
 
