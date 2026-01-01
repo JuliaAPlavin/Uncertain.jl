@@ -17,6 +17,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 [compat]
 Aqua = "0.8.9"
 CompatHelperLocal = "0.1.27"
+Makie = "0.22"
 Supposition = "0.3.5"
 TestItemRunner = "1.0.5"
 TestItems = "1.0.0"
