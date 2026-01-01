@@ -40,8 +40,8 @@ function _check_u_valid(u::Number)
     return u_
 end
 
-(::Type{T})(x::Value) where {T<:Value} = T(convert(valtype(T), x.v), convert(unctype(T), x.u))
-(::Type{T})(x::Number) where {T<:Value} = T(convert(valtype(T), x), convert(unctype(T), zero(x)))
+(::Type{T})(x::Value) where {T<:Value} = T(valtype(T)(x.v), unctype(T)(x.u))
+(::Type{T})(x::Number) where {T<:Value} = T(valtype(T)(x), unctype(T)(zero(x)))
 (::Type{T})(x) where {T<:Complex{<:Value}} = T(real(x), imag(x))
 
 """    value(x)

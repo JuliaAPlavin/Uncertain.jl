@@ -14,7 +14,7 @@ struct TwoSided{T}
         return TwoSided{typeof(first(lohi_p))}(lohi_p...)
     end
 
-    TwoSided{T}(lo, hi) where {T} = TwoSided{T}(convert(T, lo), convert(T, hi))
+    TwoSided{T}(lo, hi) where {T} = TwoSided{T}(T(lo), T(hi))
 
     function TwoSided{T}(lo::T, hi::T) where {T}
         if lo < zero(lo) || hi < zero(hi)
