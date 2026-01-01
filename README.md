@@ -1,21 +1,41 @@
 # Uncertain.jl
 
 > [!IMPORTANT]
-> Handle uncertain values with ease and performance!
+> Handle uncertain values with ease and high performance!
 
-The most common case is numbers with measurement errors. `Uncertain.jl` only exports the `±ᵤ` operator and the `U` module that contains other useful symbols:
+A Julia package for representing and propagating uncertainties through calculations with minimal overhead. Designed with composability and speed in mind, applicable to large datasets of uncertain values.
+
+## Key Features
+
+- **Minimal overhead**: Only 2x memory usage and ~3x computational overhead compared to regular values
+- **Simple API**: Clean interface with the `±ᵤ` operator and `U` module
+- **Flexible uncertainty types**: Support for symmetric, asymmetric, and custom uncertainty representations  
+- **Rich ecosystem integration**: Works seamlessly with Makie, Unitful, and more
+
+## Quick Start
+
+The most common case is numbers with measurement errors. `Uncertain.jl` exports the `±ᵤ` operator and the `U` module:
+
 ```julia
-julia> 1 ±ᵤ 0.1  # not `±` so that not to clash with the popular `IntervalSets.jl` package
+using Uncertain
+
+julia> x = 1 ±ᵤ 0.1  # Create an uncertain value
 1.0 ± 0.1
 
-julia> typeof(1 ±ᵤ 0.1)
+julia> typeof(x)
 Uncertain.ValueReal{Float64, Float64}
 
-julia> U.value(1 ±ᵤ 0.1)
+julia> U.value(x)     # Extract the nominal value
 1.0
 
-julia> U.uncertainty(1 ±ᵤ 0.1)
+julia> U.uncertainty(x)  # Extract the uncertainty
 0.1
+
+julia> y = 2.5 ±ᵤ 0.2
+2.5 ± 0.2
+
+julia> x + y  # Automatic error propagation
+3.5 ± 0.22360679774997896
 ```
 
 ## Scope
@@ -28,6 +48,26 @@ Furthermore, `Uncertain.jl` provides integrations with other parts of the Julia 
 - Plotting with `Makie` – you should be able to pass uncertain values to any recipe where it makes sense
 - Conversions to and from `IntervalSets.jl`, `Measurements.jl` and `MonteCarloMeasurements.jl` objects for ease of interoperability
 - `Uncertain.Value`s with `Unitful.jl` quantities inside them support the `Unitful.jl` interface
+
+## Why `±ᵤ` instead of `±`?
+
+We use the `±ᵤ` operator (not just `±`) to avoid conflicts with the popular `IntervalSets.jl` package, which exports the `±` operator for creating intervals. This design choice ensures seamless compatibility when both packages are used together.
+
+If you prefer to use the shorter `±` symbol, you can import it explicitly:
+
+```julia
+using Uncertain
+import Uncertain: ±ᵤ as ±
+
+julia> x = 1.5 ± 0.05  # Now you can use the standard ± symbol
+1.5 ± 0.05
+
+julia> y = 3.2 ± 0.1
+3.2 ± 0.1
+
+julia> x * y  # Works exactly the same
+4.8 ± 0.19209372712298546
+```
 
 ## Relation to other uncertainty packages
 
