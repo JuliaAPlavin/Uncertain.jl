@@ -8,6 +8,9 @@
     @test U.TwoSided(0.1, 0.2) != U.TwoSided(0.1, 0.3)
     @test !(U.TwoSided(0.1, 0.2) ≈ U.TwoSided(0.1, 0.3))
 
+    @test iszero(U.TwoSided(0.0, 0.0))
+    @test !iszero(U.TwoSided(0.0, 0.1))
+
     @test U.width(0.1) == 0.2
     @test U.maxdiff(0.1) == 0.1
 
