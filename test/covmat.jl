@@ -58,6 +58,10 @@ end
     @test zero(U.CovMat(σx=0.1, σy=0.2, ρ=0)).cov::Symmetric{Float64, <:SMatrix} == [0 0; 0 0]
     @test zero(U.CovMat(@SMatrix([1 2; 2 3]))).cov::SMatrix === @SMatrix([0 0; 0 0])
 
+    v = [1, 0] ±ᵤ U.CovMat(@SMatrix [0.25 0.0; 0.0 0.0625])
+    @test v == [1, 0] ±ᵤ U.CovMat(σx=0.5, σy=0.25, ρ=0)
+    @test v != [1, 0] ±ᵤ U.CovMat(σx=0.5, σy=0.25, ρ=0.1)
+
     # zero uncertainty:
     v = [1, 2] ±ᵤ U.CovMat(σx=0, σy=0, ρ=0.5)
     @test U.nσ(v) == Inf
