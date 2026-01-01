@@ -46,6 +46,8 @@ Base.:*(a::Value, b::Value) = let
     Value(x, σ)
 end
 
+Base.:*(A::AbstractMatrix, x::Value) = propagate(*, A, nothing, _v(x), _Δ(x))
+
 Base.:/(a::Value, b::Value) = let
     require(/, assume_independent)
     x = _v(a) / _v(b)

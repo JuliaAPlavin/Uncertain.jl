@@ -3,7 +3,7 @@ module Uncertain
 export U, ±ᵤ
 
 using Accessors
-using LinearAlgebra: dot, pinv
+using LinearAlgebra: dot, pinv, cholesky, Symmetric
 
 include("types.jl")
 include("show.jl")

@@ -96,4 +96,7 @@ end
 
     @test U.nσ([NaN, 1] ±ᵤ U.CovMat(σx=0.1, σy=0.2, ρ=0)) |> isnan
     @test U.nσ([1, 2] ±ᵤ U.CovMat(σx=NaN, σy=0.2, ρ=0)) |> isnan
+
+    M = @SMatrix [1 2; 3 4]
+    @test M * v2 == [11, 25] ±ᵤ U.CovMat(@SMatrix [1.21 2.75; 2.75 6.25])
 end
