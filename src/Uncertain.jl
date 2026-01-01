@@ -49,6 +49,8 @@ function maxdiff end
 width(a::Number) = 2a
 maxdiff(a::Number) = a
 
+add(a::Number, b::Number) = a + b
+
 
 baremodule U
 export Value, ValueAny, ValueNumber, ValueReal, value, uncertainty, nσ, weightedmean, ±
@@ -56,7 +58,7 @@ using ..Uncertain:
     Value, ValueAny, ValueNumber, ValueReal,
     value, uncertainty, nσ,
     weightedmean,
-    TwoSided, width, maxdiff, reverse
+    TwoSided, width, maxdiff, reverse, add
 using ..Uncertain: ±ᵤ as ±
 end
 

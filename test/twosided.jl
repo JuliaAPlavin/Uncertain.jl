@@ -1,6 +1,13 @@
 @testitem "one vs two sided" begin
     using Unitful
 
+    @test U.TwoSided(0.1, 0.2) == U.TwoSided(0.1, 0.2)
+    @test U.TwoSided(0.1, 0.2) ≈ U.TwoSided(0.1, 0.2)
+    @test U.TwoSided(0.1, 0.2) != U.TwoSided(0.1, nextfloat(0.2))
+    @test U.TwoSided(0.1, 0.2) ≈ U.TwoSided(0.1, nextfloat(0.2))
+    @test U.TwoSided(0.1, 0.2) != U.TwoSided(0.1, 0.3)
+    @test !(U.TwoSided(0.1, 0.2) ≈ U.TwoSided(0.1, 0.3))
+
     @test U.width(0.1) == 0.2
     @test U.maxdiff(0.1) == 0.1
 
@@ -15,4 +22,9 @@
 
     @test U.reverse(0.1) == 0.1
     @test U.reverse(U.TwoSided(0.1, 0.2)) == U.TwoSided(0.2, 0.1)
+
+    @test U.add(0.1, 0.2) ≈ 0.3
+    @test U.add(U.TwoSided(0.1, 0.2), 0.3) ≈ U.TwoSided(0.4, 0.5)
+    @test U.add(0.3, U.TwoSided(0.1, 0.2)) ≈ U.TwoSided(0.4, 0.5)
+    @test U.add(U.TwoSided(0.1, 0.2), U.TwoSided(0.3, 0.4)) ≈ U.TwoSided(0.4, 0.6)
 end
