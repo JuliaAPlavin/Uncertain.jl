@@ -3,6 +3,7 @@
     a = 2 ±ᵤ 0.1
     @test a + 3 == 5 ±ᵤ 0.1
     @test_throws "independent" a + a
+    Uncertain.assume_independent() = true
 end
 
 @testsnippet MeasSnippet begin
@@ -90,11 +91,9 @@ end
 end
 
 @testitem "consistency - bivariate, independent" setup=[MeasSnippet] begin
-    Uncertain.assume_independent() = true
     @testset for op in [+, -, *, /, ^, hypot, atan]
         @test ispass(@check db=false is_approx_same(Data.Just(op), smaller_valgen, smaller_valgen))
     end
-    Uncertain.assume_independent() = false
 end
 
 @testitem "complex" begin
