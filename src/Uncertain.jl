@@ -43,6 +43,7 @@ function nσ(val::AbstractVector, unc::CovMat)
     cov = unc.cov
     Pv = pinv(cov) * val
     result = √dot(val, Pv)
+    isnan(result) && return result
     # check if val has component in null space (zero uncertainty direction)
     cov * Pv ≈ val || return oftype(result, Inf)
     return result

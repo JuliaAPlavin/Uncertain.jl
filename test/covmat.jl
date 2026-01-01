@@ -86,4 +86,7 @@ end
     v2 = [3, 4] ±ᵤ U.CovMat(σx=0.3, σy=0.4, ρ=1)
     @test U.nσ(v2) ≈ 10
     @test norm(v2) ≈ 5 ±ᵤ 0.5
+
+    @test U.nσ([NaN, 1] ±ᵤ U.CovMat(σx=0.1, σy=0.2, ρ=0)) |> isnan
+    @test U.nσ([1, 2] ±ᵤ U.CovMat(σx=NaN, σy=0.2, ρ=0)) |> isnan
 end
