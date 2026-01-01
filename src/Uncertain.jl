@@ -31,7 +31,8 @@ Base.promote_rule(::Type{<:ValueAny{T1,S1}}, ::Type{<:ValueAny{T2,S2}}) where {T
 
 How many uncertainties `x` is away from zero. For numeric values, this is `abs(U.value(x)) / U.uncertainty(x)`.
 """
-nσ(x) = abs(U.value(x)) / U.uncertainty(x)
+nσ(x::U.Value) = nσ(value(x), uncertainty(x))
+nσ(val::Number, unc::Number) = abs(val) / unc
 
 """    width(uncertainty)
 
