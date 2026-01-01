@@ -154,12 +154,12 @@ end
     @test 2((1+1im)u"km" ±ᵤ 10u"m") === (2000 + 2000im)u"m" ±ᵤ 20u"m"
 
     @test a*u"km" == b
-    @test a*(1u"km") == b
+    @test a*(-1u"km") == -b
     @test u"km"*a == b
     @test (1u"km")*a == b
     
     @test b*u"m" == (3±ᵤ0.2)u"km*m"
-    @test b*(1u"m") == (3±ᵤ0.2)u"km*m"
+    @test b*(-1u"m") == -(3±ᵤ0.2)u"km*m"
     @test b/u"km" == 3±ᵤ0.2
     @test b/1u"km" == 3±ᵤ0.2
     @test u"km"/a == (1/3 ±ᵤ 1/45)u"km"
