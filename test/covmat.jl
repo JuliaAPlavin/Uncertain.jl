@@ -101,4 +101,9 @@ end
 
     M = @SMatrix [1 2; 3 4]
     @test M * v2 == [11, 25] ±ᵤ U.CovMat(@SMatrix [1.21 2.75; 2.75 6.25])
+
+    @test U.boundary(v2; npoints=4)
+
+    # reverse: CovMat is symmetric under negation, so reverse is identity
+    @test U.reverse(U.CovMat(σx=0.1, σy=0.2, ρ=0.5)) == U.CovMat(σx=0.1, σy=0.2, ρ=0.5)
 end
