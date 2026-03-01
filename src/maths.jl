@@ -152,6 +152,7 @@ end
 for f in [:conj, :real, :imag]
     @eval Base.$f(x::Value) = Value($f(_v(x)), _Δ(x))
 end
+Base.complex(x::Value) = Complex(x, zero(x))
 
 Base.deg2rad(a::Value) = Value(deg2rad(_v(a)), deg2rad(_Δ(a)))
 Base.rad2deg(a::Value) = Value(rad2deg(_v(a)), rad2deg(_Δ(a)))

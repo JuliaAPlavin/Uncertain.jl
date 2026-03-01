@@ -103,6 +103,9 @@ end
 
     @test U.Value(1 + 2im, 0.1) == Complex(U.Value(1, 0.1), U.Value(2, 0.1))
 
+    @test complex(1 ±ᵤ 0.1) === Complex(1 ±ᵤ 0.1, 0 ±ᵤ 0.0)
+    @test complex(1.0 ±ᵤ 0.1) === Complex(1.0 ±ᵤ 0.1, 0.0 ±ᵤ 0.0)
+
     @test im*(1±ᵤ0.1) === U.Value(1im, 0.1)
     cmplx = U.Value(1+2im, 0.5)
     @test 2*cmplx == U.Value(2+4im, 1)
