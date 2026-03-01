@@ -1,10 +1,14 @@
 module MonteCarloMeasurementsExt
 
 import MonteCarloMeasurements as MCM
+using MonteCarloMeasurements.StaticArrays: StaticVector, SMatrix
 using Uncertain
 using LinearAlgebra: Symmetric, RowMaximum, cholesky, invperm
 
 (::Type{T})(x::MCM.AbstractParticles) where {T<:U.Value} = T(MCM.pmean(x), MCM.pstd(x))
+U.Value(x::AbstractVector{<:MCM.AbstractParticles}) = U.Value(map(MCM.pmean, x), _covmat_particles(x))
+_covmat_particles(x::AbstractVector{<:MCM.AbstractParticles}) = U.CovMat(Symmetric(MCM.pcov(collect(x))))
+_covmat_particles(x::StaticVector{N,<:MCM.AbstractParticles}) where {N} = U.CovMat(Symmetric(SMatrix{N,N}(MCM.pcov(collect(x)))))
 
 (::Type{PT})(n::Int, x::U.Value) where {PT <: MCM.AbstractParticles} = PT(n, MCM.Normal(U.value(x), U.uncertainty(x)))
 

@@ -52,10 +52,32 @@ end
     import Measurements as ME
     import MonteCarloMeasurements as MCM
     import IntervalSets as IS
+    using LinearAlgebra: Symmetric
+    using StaticArrays
 
     me = ME.measurement(3, 1)
     @test U.Value(me) === 3.0 ±ᵤ 1.0
     @test ME.Measurement(U.Value(me)) == me
+
+    @testset "Value from vector particles" for PT in [MCM.Particles, MCM.StaticParticles]
+        p1 = PT([1.0, 3.0, 5.0])
+        p2 = PT([10.0, 14.0, 18.0])
+        expected_cov = Symmetric([4.0 8.0; 8.0 16.0])
+
+        us = U.Value(SVector(p1, p2))
+        @test us isa U.ValueAny
+        @test U.value(us) isa SVector{2, Float64}
+        @test U.value(us) == SVector(3.0, 14.0)
+        @test U.uncertainty(us).cov isa Symmetric{Float64, <:SMatrix}
+        @test U.uncertainty(us).cov == expected_cov
+
+        uv = U.Value([p1, p2])
+        @test uv isa U.ValueAny
+        @test U.value(uv) isa Vector{Float64}
+        @test U.value(uv) == [3.0, 14.0]
+        @test U.uncertainty(uv).cov isa Symmetric{Float64, Matrix{Float64}}
+        @test U.uncertainty(uv).cov == expected_cov
+    end
 
     @testset for PT in [MCM.Particles, MCM.StaticParticles]
         pa = PT(3 .+ randn(10^3))
@@ -90,7 +112,6 @@ end
         @test MCM.pstd(imag(pc)) ≈ 0.3 rtol=0.2
 
         # vector + CovMat
-        using StaticArrays
         v = SVector(3.0, 4.0) ±ᵤ U.CovMat(σx=0.3, σy=0.4, ρ=0.5)
         pv = U.uconvert(PT, v)
         @test pv isa SVector{2, <:MCM.AbstractParticles}
@@ -110,7 +131,6 @@ end
         @test MCM.nparticles(pv100[1]) == 100
 
         # singular: ρ=1
-        using LinearAlgebra: Symmetric
         v1 = SVector(3.0, 4.0) ±ᵤ U.CovMat(Symmetric(SMatrix{2,2}(0.09, 0.12, 0.12, 0.16)))
         pv1 = U.uconvert(PT, v1)
         @test MCM.pmean(pv1[1]) ≈ 3 rtol=0.1
