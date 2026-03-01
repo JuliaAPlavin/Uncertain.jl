@@ -136,7 +136,8 @@ end
         @test MCM.pmean(pv1[1]) ≈ 3 rtol=0.1
         @test MCM.pstd(pv1[1]) ≈ 0.3 rtol=0.2
         @test MCM.pstd(pv1[2]) ≈ 0.4 rtol=0.2
-        @test pv1[1].particles ≈ pv1[2].particles rtol=1e-5
+        using Statistics: cor
+        @test cor(pv1[1].particles, pv1[2].particles) ≈ 1
 
         # singular: σy=0
         v0 = SVector(3.0, 4.0) ±ᵤ U.CovMat(Symmetric(SMatrix{2,2}(0.09, 0.0, 0.0, 0.0)))
