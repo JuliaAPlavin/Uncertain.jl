@@ -107,3 +107,13 @@ end
     # reverse: CovMat is symmetric under negation, so reverse is identity
     @test U.reverse(U.CovMat(σx=0.1, σy=0.2, ρ=0.5)) == U.CovMat(σx=0.1, σy=0.2, ρ=0.5)
 end
+
+@testitem "float types" begin
+    cov64 = U.CovMat([0.01 0.006; 0.006 0.04])
+    cov32 = U.CovMat(Float32.(cov64.cov))
+
+    @test U.nσ([1.0, 2.0] ±ᵤ cov64) ≈ 12.4  rtol=1e-3
+    @test U.nσ([1.0, 2.0] ±ᵤ cov32) ≈ 12.4  rtol=1e-3
+    @test U.nσ(Float32[1, 2] ±ᵤ cov64) ≈ 12.4  rtol=1e-3
+    @test U.nσ(Float32[1, 2] ±ᵤ cov32) ≈ 12.4  rtol=1e-3
+end

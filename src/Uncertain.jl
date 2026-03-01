@@ -3,7 +3,7 @@ module Uncertain
 export U, ±ᵤ
 
 using Accessors
-using LinearAlgebra: dot, pinv, cholesky, Symmetric
+using LinearAlgebra: dot, cholesky, Symmetric, Hermitian, eigen
 
 include("types.jl")
 include("show.jl")
@@ -41,12 +41,30 @@ end
 nσ(val::Number, unc::Number) = abs(val) / unc
 function nσ(val::AbstractVector, unc::CovMat)
     cov = unc.cov
-    Pv = pinv(cov) * val
-    result = √dot(val, Pv)
-    isnan(result) && return result
-    # check if val has component in null space (zero uncertainty direction)
-    cov * Pv ≈ val || return oftype(result, Inf)
-    return result
+    T = float(real(promote_type(eltype(val), eltype(cov))))
+    (any(isnan, val) || any(isnan, cov)) && return T(NaN)
+
+    # For singular covariance matrices, the natural extension is the
+    # Mahalanobis distance on the covariance range, with `Inf` for any
+    # component in a zero-uncertainty direction.
+    eig = eigen(cov isa Union{Symmetric, Hermitian} ? cov : Symmetric(cov))
+    λ = eig.values
+    coeffs = eig.vectors' * val
+
+    λmax = maximum(abs, λ)
+    tol = length(λ) * eps(typeof(λmax)) * λmax
+
+    mahalanobis² = sum(map(λ, coeffs) do λ, c
+        c² = abs2(c)
+        if λ > tol
+            T(c² / λ)  # regular non-zero-uncertainty component
+        elseif c² > tol
+            T(Inf)  # non-zero component in zero-uncertainty direction
+        else
+            zero(T)  # zero component in zero-uncertainty direction
+        end
+    end)
+    return √mahalanobis²
 end
 
 _ustrip(x) = x  # default: do nothing; see UnitfulExt for more
