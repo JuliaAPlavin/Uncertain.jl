@@ -106,6 +106,10 @@ _sign1i(x) = x < zero(x) ? -1 : 1
 
 function by_uncertainty end
 
+function uconvert end
+uconvert(T, x::Value) = uconvert(T, value(x), uncertainty(x))
+uconvert(T, x::Complex{<:Value}) = Complex(uconvert(T, real(x)), uconvert(T, imag(x)))
+
 
 baremodule U
 export Value, ValueAny, ValueNumber, ValueReal, value, uncertainty, nσ, weightedmean, ±
@@ -117,7 +121,8 @@ using ..Uncertain:
     TwoSided, width, maxdiff, reverse, add,
     CovMat,
     by_uncertainty,
-    boundary
+    boundary,
+    uconvert
 using ..Uncertain: ±ᵤ as ±
 end
 

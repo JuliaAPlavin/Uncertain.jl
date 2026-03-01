@@ -68,6 +68,67 @@ end
         @test MCM.pstd(pa) ≈ 1 rtol=1e-1
     end
 
+    @testset "uconvert" for PT in [MCM.Particles, MCM.StaticParticles]
+        # scalar
+        pa = U.uconvert(PT, 3 ±ᵤ 1)
+        @test pa isa MCM.AbstractParticles
+        @test MCM.pmean(pa) ≈ 3 rtol=0.1
+        @test MCM.pstd(pa) ≈ 1 rtol=0.2
+
+        # scalar with specified N
+        pa100 = U.uconvert(PT{Any, 100}, 3 ±ᵤ 1)
+        @test pa100 isa MCM.AbstractParticles
+        @test MCM.nparticles(pa100) == 100
+        @test MCM.pmean(pa100) ≈ 3 rtol=0.2
+
+        # complex
+        pc = U.uconvert(PT, Complex(1 ±ᵤ 0.5, 2 ±ᵤ 0.3))
+        @test pc isa Complex{<:MCM.AbstractParticles}
+        @test MCM.pmean(real(pc)) ≈ 1 rtol=0.1
+        @test MCM.pmean(imag(pc)) ≈ 2 rtol=0.1
+        @test MCM.pstd(real(pc)) ≈ 0.5 rtol=0.2
+        @test MCM.pstd(imag(pc)) ≈ 0.3 rtol=0.2
+
+        # vector + CovMat
+        using StaticArrays
+        v = SVector(3.0, 4.0) ±ᵤ U.CovMat(σx=0.3, σy=0.4, ρ=0.5)
+        pv = U.uconvert(PT, v)
+        @test pv isa AbstractVector{<:MCM.AbstractParticles}
+        @test MCM.pmean(pv[1]) ≈ 3 rtol=0.1
+        @test MCM.pmean(pv[2]) ≈ 4 rtol=0.1
+        @test MCM.pstd(pv[1]) ≈ 0.3 rtol=0.2
+        @test MCM.pstd(pv[2]) ≈ 0.4 rtol=0.2
+
+        # vector + CovMat with specified N
+        pv100 = U.uconvert(PT{Any, 100}, v)
+        @test MCM.nparticles(pv100[1]) == 100
+
+        # singular: ρ=1
+        using LinearAlgebra: Symmetric
+        v1 = SVector(3.0, 4.0) ±ᵤ U.CovMat(Symmetric(SMatrix{2,2}(0.09, 0.12, 0.12, 0.16)))
+        pv1 = U.uconvert(PT, v1)
+        @test MCM.pmean(pv1[1]) ≈ 3 rtol=0.1
+        @test MCM.pstd(pv1[1]) ≈ 0.3 rtol=0.2
+        @test MCM.pstd(pv1[2]) ≈ 0.4 rtol=0.2
+        using Statistics: cor
+        @test cor(pv1[1].particles, pv1[2].particles) ≈ 1 atol=1e-10
+
+        # singular: σy=0
+        v0 = SVector(3.0, 4.0) ±ᵤ U.CovMat(Symmetric(SMatrix{2,2}(0.09, 0.0, 0.0, 0.0)))
+        pv0 = U.uconvert(PT, v0)
+        @test MCM.pmean(pv0[1]) ≈ 3 rtol=0.1
+        @test MCM.pstd(pv0[1]) ≈ 0.3 rtol=0.2
+        @test all(pv0[2].particles .== 4.0)
+
+    end
+
+    # type stability with concrete types (outside loop so PT is compile-time)
+    v = SVector(3.0, 4.0) ±ᵤ U.CovMat(σx=0.3, σy=0.4, ρ=0.5)
+    @inferred U.uconvert(MCM.Particles{Any, 128}, 3 ±ᵤ 1)
+    @inferred U.uconvert(MCM.Particles{Any, 128}, Complex(1 ±ᵤ 0.5, 2 ±ᵤ 0.3))
+    @inferred U.uconvert(MCM.StaticParticles{Any, 128}, 3 ±ᵤ 1)
+    @inferred U.uconvert(MCM.StaticParticles{Any, 128}, Complex(1 ±ᵤ 0.5, 2 ±ᵤ 0.3))
+
     @test IS.Interval(1 ±ᵤ 0.1) === IS.Interval(0.9, 1.1)
     @test U.Value(IS.Interval(0.5, 1.5)) === 1 ±ᵤ 0.5
 end
