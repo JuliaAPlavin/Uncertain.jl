@@ -93,14 +93,20 @@ end
         using StaticArrays
         v = SVector(3.0, 4.0) ±ᵤ U.CovMat(σx=0.3, σy=0.4, ρ=0.5)
         pv = U.uconvert(PT, v)
-        @test pv isa AbstractVector{<:MCM.AbstractParticles}
+        @test pv isa SVector{2, <:MCM.AbstractParticles}
         @test MCM.pmean(pv[1]) ≈ 3 rtol=0.1
         @test MCM.pmean(pv[2]) ≈ 4 rtol=0.1
         @test MCM.pstd(pv[1]) ≈ 0.3 rtol=0.2
         @test MCM.pstd(pv[2]) ≈ 0.4 rtol=0.2
 
+        # dynamic vector + CovMat
+        v_dyn = [3.0, 4.0] ±ᵤ U.CovMat(σx=0.3, σy=0.4, ρ=0.5)
+        pv_dyn = U.uconvert(PT, v_dyn)
+        @test pv_dyn isa Vector{<:MCM.AbstractParticles}
+
         # vector + CovMat with specified N
         pv100 = U.uconvert(PT{Any, 100}, v)
+        @test pv100 isa SVector{2, <:MCM.AbstractParticles}
         @test MCM.nparticles(pv100[1]) == 100
 
         # singular: ρ=1

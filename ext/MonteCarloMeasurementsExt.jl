@@ -22,7 +22,7 @@ function _sample_covmat(::Type{PT}, v, u, n) where {PT <: MCM.AbstractParticles}
     Lr = c.L[:, 1:c.rank]
     ip = invperm(c.p)
     samples = v .+ Lr[ip, :] * randn(c.rank, n)
-    map(i -> PT(samples[i, :]), axes(samples, 1))
+    map((_, i) -> PT(samples[i, :]), v, eachindex(v))
 end
 
 _particletype(::Type{<:MCM.Particles}) = MCM.Particles
