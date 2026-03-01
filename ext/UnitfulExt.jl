@@ -3,7 +3,7 @@ module UnitfulExt
 using Unitful
 using Uncertain
 
-Uncertain._ustrip(x::U.Value) = ustrip(x)
+Uncertain._ustrip(x::U.Value{<:Union{Quantity, AbstractArray{<:Quantity}}}) = ustrip(x)
 Unitful.unit(x::U.Value) = unit(U.value(x))
 Unitful.ustrip(x::U.Value) = ustrip(unit(x), x)
 Unitful.ustrip(u::Unitful.Units, x::U.Value) = U.Value(ustrip(u, U.value(x)), ustrip(u, U.uncertainty(x)))

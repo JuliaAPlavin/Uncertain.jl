@@ -69,9 +69,13 @@ end
 
 boundary(x::Value; kwargs...) = let
     x_nou = _ustrip(x)
-    u = oneunit(eltype(x.v))
     pts = boundary(U.value(x_nou), U.uncertainty(x_nou); kwargs...)
-    map(p -> p .* u, pts)
+    if x_nou !== x
+        u = oneunit(eltype(x.v))
+        map(p -> p .* u, pts)
+    else
+        pts
+    end
 end
 
 _ustrip(x) = x  # default: do nothing; see UnitfulExt for more
