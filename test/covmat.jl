@@ -102,10 +102,18 @@ end
     M = @SMatrix [1 2; 3 4]
     @test M * v2 == [11, 25] ±ᵤ U.CovMat(@SMatrix [1.21 2.75; 2.75 6.25])
 
-    @test U.boundary(v2; npoints=4)
-
     # reverse: CovMat is symmetric under negation, so reverse is identity
     @test U.reverse(U.CovMat(σx=0.1, σy=0.2, ρ=0.5)) == U.CovMat(σx=0.1, σy=0.2, ρ=0.5)
+end
+
+@testitem "boundary" begin
+    using StaticArrays, Unitful
+
+    v2 = SVector(3, 4) ±ᵤ U.CovMat(σx=0.3, σy=0.4, ρ=0)
+    @test U.boundary(v2; npoints=4) ≈ [SVector(3.0, 4.4), SVector(3.3, 4.0), SVector(3.0, 3.6), SVector(2.7, 4.0)]
+
+    v2u = v2 * u"m"
+    @test all(U.boundary(v2u; npoints=4) .≈ [SVector(3.0, 4.4)u"m", SVector(3.3, 4.0)u"m", SVector(3.0, 3.6)u"m", SVector(2.7, 4.0)u"m"])
 end
 
 @testitem "float types" begin

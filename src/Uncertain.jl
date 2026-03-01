@@ -67,6 +67,13 @@ function nσ(val::AbstractVector, unc::CovMat)
     return √mahalanobis²
 end
 
+boundary(x::Value; kwargs...) = let
+    x_nou = _ustrip(x)
+    u = oneunit(eltype(x.v))
+    pts = boundary(U.value(x_nou), U.uncertainty(x_nou); kwargs...)
+    map(p -> p .* u, pts)
+end
+
 _ustrip(x) = x  # default: do nothing; see UnitfulExt for more
 
 """    width(uncertainty)
@@ -105,7 +112,8 @@ using ..Uncertain:
     weightedmean,
     TwoSided, width, maxdiff, reverse, add,
     CovMat,
-    by_uncertainty
+    by_uncertainty,
+    boundary
 using ..Uncertain: ±ᵤ as ±
 end
 
