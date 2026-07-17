@@ -19,19 +19,20 @@ function Base.:*(x::U.Value, y::Unitful.Units, z::Unitful.Units...)
     U.Value(U.value(x) * u, U.uncertainty(x) * u)
 end
 
-for f in [:*, :/]
-    # `x/y` and `x*y` (uncertain ÷/× exact) both scale the uncertainty by `abs(y)`, so
-    # reusing `$f` on the uncertainty component is correct here.
-    @eval Base.$f(x::U.Value, y::Unitful.Quantity) = U.Value($f(U.value(x), y), $f(U.uncertainty(x), abs(y)))
-    @eval Base.$f(x::U.Value, y::Unitful.FreeUnits) = U.Value($f(U.value(x), y), $f(U.uncertainty(x), y))
-end
-
-# `y * x` (exact × uncertain) scales the uncertainty by `abs(y)`.
-Base.:*(y::Unitful.Quantity, x::U.Value) = U.Value(y * U.value(x), abs(y) * U.uncertainty(x))
-# `y / x` (exact ÷ uncertain): the uncertainty follows the reciprocal rule
-# `|y| * σ / value(x)^2` (= `|f'(value(x))| * σ` for `f(x) = y/x`). Route through `inv`,
-# which applies exactly this propagation (maths.jl) and handles σ = 0 without producing NaN.
+# `Value` and `Unitful.Quantity` are both `<:Number`, so `Value op Quantity` and
+# `Quantity op Value` are ambiguous between Uncertain's and Unitful's methods and need
+# explicit definitions. Multiplication by an exact quantity scales the uncertainty by `|y|`;
+# division is expressed as multiplication by the reciprocal, so `inv` (maths.jl) supplies the
+# reciprocal propagation and there is no separate division rule to keep in sync.
+Base.:*(x::U.Value, y::Unitful.Quantity) = U.Value(U.value(x) * y, U.uncertainty(x) * abs(y))
+Base.:*(y::Unitful.Quantity, x::U.Value) = x * y
+Base.:/(x::U.Value, y::Unitful.Quantity) = x * inv(y)
 Base.:/(y::Unitful.Quantity, x::U.Value) = y * inv(x)
+
+# A bare unit is not a `Number`; multiplying or dividing a `Value` by one simply
+# attaches/rescales the unit on both components (exact).
+Base.:*(x::U.Value, y::Unitful.FreeUnits) = U.Value(U.value(x) * y, U.uncertainty(x) * y)
+Base.:/(x::U.Value, y::Unitful.FreeUnits) = U.Value(U.value(x) / y, U.uncertainty(x) / y)
 
 
 Unitful.ustrip(u::Unitful.Units, e::U.CovMat) = U.CovMat(ustrip.(u^2, e.cov))
