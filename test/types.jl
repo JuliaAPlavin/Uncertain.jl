@@ -250,7 +250,32 @@ end
     @test b/u"km" == 3±ᵤ0.2
     @test b/1u"km" == 3±ᵤ0.2
     @test u"km"/a == (1/3 ±ᵤ 1/45)u"km"
-    @test 1u"km"/b == 1/3 ±ᵤ 5
+    @test 1u"km"/b == 1/3 ±ᵤ 1/45
+
+    # exact Quantity ÷ uncertain Value preserves relative uncertainty.
+    # `b = (3 ± 0.2) km`, so `1km/b` is known to the same fraction 0.2/3:
+    # σ = (1/3)(0.2/3) = 1/45. 
+    @test U.uncertainty(1u"km"/b) / U.value(1u"km"/b) ≈ U.uncertainty(b) / U.value(b)
+    @test 1u"km"/b == 1u"km" * inv(b)                     # division ≡ multiply by reciprocal
+    # Strong-zero: σ = 0 (even at value 0) must give σ = 0, not NaN.
+    @test U.uncertainty(1u"m^2" / ((3.0 ±ᵤ 0.0)u"m")) == 0.0u"m"
+    @test U.uncertainty(1u"m^2" / ((0.0 ±ᵤ 0.0)u"m")) == 0.0u"m"
+end
+
+@testitem "Unitful multiply/divide preserve relative uncertainty" setup=[MeasSnippet] begin
+    using Unitful: @u_str
+    # Dimensionless; abs because uncertainty ≥ 0 while value may be negative.
+    relunc(z) = abs(U.uncertainty(z) / U.value(z))
+    # For an exact quantity and an uncertain value (nonzero value), *, / by the exact
+    # quantity all preserve the value's relative uncertainty (the delta method).
+    # `smaller_valgen`/`fgen` come from MeasSnippet: Supposition splices generator arguments
+    # into a closure, so they need to be setup-globals rather than testitem-locals.
+    function preserves(x, y)
+        iszero(U.value(x)) && return true          # relative uncertainty undefined at value 0
+        xq = x*u"km"; yq = y*u"s"
+        relunc(yq/xq) ≈ relunc(xq) && relunc(yq*xq) ≈ relunc(xq) && relunc(xq/yq) ≈ relunc(xq)
+    end
+    @test ispass(@check preserves(smaller_valgen, fgen))
 end
 
 @testitem "accessing values without uncertainty" begin
