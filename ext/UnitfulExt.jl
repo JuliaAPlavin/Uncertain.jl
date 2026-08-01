@@ -20,9 +20,11 @@ function Base.:*(x::U.Value, y::Unitful.Units, z::Unitful.Units...)
 end
 
 for f in [:*, :/]
-    @eval Base.$f(x::U.Value, y::Unitful.Quantity) = U.Value($f(U.value(x), y), $f(U.uncertainty(x), abs(y)))
+    # `Quantity` is a `Number`: delegate for correct uncertainty propagation
+    @eval Base.$f(x::U.Value, y::Unitful.Quantity) = @invoke $f(x, y::Number)
+    @eval Base.$f(y::Unitful.Quantity, x::U.Value) = @invoke $f(y::Number, x)
+    # `FreeUnits` just rescale both value and uncertainty
     @eval Base.$f(x::U.Value, y::Unitful.FreeUnits) = U.Value($f(U.value(x), y), $f(U.uncertainty(x), y))
-    @eval Base.$f(y::Unitful.Quantity, x::U.Value) = U.Value($f(y, U.value(x)), $f(abs(y), U.uncertainty(x)))
 end
 
 

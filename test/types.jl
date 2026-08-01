@@ -250,7 +250,7 @@ end
     @test b/u"km" == 3±ᵤ0.2
     @test b/1u"km" == 3±ᵤ0.2
     @test u"km"/a == (1/3 ±ᵤ 1/45)u"km"
-    @test 1u"km"/b == 1/3 ±ᵤ 5
+    @test 1u"km"/b == 1/3 ±ᵤ 1/45
 end
 
 @testitem "accessing values without uncertainty" begin
