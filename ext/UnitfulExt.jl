@@ -20,9 +20,9 @@ function Base.:*(x::U.Value, y::Unitful.Units, z::Unitful.Units...)
 end
 
 for f in [:*, :/]
-    @eval Base.$f(x::U.Value, y::Unitful.Quantity) = U.Value($f(U.value(x), y), $f(U.uncertainty(x), abs(y)))
+    @eval Base.$f(x::U.Value, y::Unitful.Quantity) = @invoke Base.$f(x::U.Value, y::Number)
+    @eval Base.$f(y::Unitful.Quantity, x::U.Value) = @invoke Base.$f(y::Number, x::U.Value)
     @eval Base.$f(x::U.Value, y::Unitful.FreeUnits) = U.Value($f(U.value(x), y), $f(U.uncertainty(x), y))
-    @eval Base.$f(y::Unitful.Quantity, x::U.Value) = U.Value($f(y, U.value(x)), $f(abs(y), U.uncertainty(x)))
 end
 
 
