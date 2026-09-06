@@ -139,6 +139,8 @@ for T in [:Value, :Number, :Rational, :Real, :AbstractFloat]
     @eval Base.isequal(a::Value, b::$T) = isequal(_v(a), _v(b)) && isequal(_Δ(a), _Δ(b))
     T != :Value && @eval Base.isequal(a::$T, b::Value) = isequal(_v(a), _v(b)) && isequal(_Δ(a), _Δ(b))
 end
+Base.hash(v::Value{<:Number,<:Number}, h::UInt) =
+    iszero(_Δ(v)) ? hash(_v(v), h) : hash(_v(v), hash(_Δ(v), hash(Uncertain, h)))
 Base.hash(v::Value, h::UInt) = hash(_v(v), hash(_Δ(v), hash(Uncertain, h)))
 
 # same code as for AbstractFloats in Base

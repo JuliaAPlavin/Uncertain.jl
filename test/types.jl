@@ -173,6 +173,11 @@ end
         @test !f(U.Value(1, 0.1), U.Value(1, 0.15))
     end
 
+    test_isequal_hash(U.Value(1, 0), 1)
+    test_isequal_hash(U.Value(1.0, 0.0), 1)
+    test_isequal_hash(U.Value(1 + 0im, 0), 1)
+    @test Dict{Any,Symbol}(U.Value(1, 0) => :present)[1] === :present
+
     @test U.Value(+0.0, 0.1) == U.Value(-0.0, 0.1)
     @test !isequal(U.Value(+0.0, 0.1), U.Value(-0.0, 0.1))
     @test U.Value(NaN, 0.1) != U.Value(NaN, 0.1)
