@@ -31,6 +31,7 @@ Base.float(::Type{TwoSided{T}}) where {T} = TwoSided{float(T)}
 Base.:(==)(a::TwoSided, b::TwoSided) = a.lo == b.lo && a.hi == b.hi
 Base.isequal(a::TwoSided, b::TwoSided) = isequal(a.lo, b.lo) && isequal(a.hi, b.hi)
 Base.hash(u::TwoSided, h::UInt) = hash(u.lo, hash(u.hi, hash(TwoSided, h)))
+Base.isless(a::TwoSided, b::TwoSided) = isless((a.lo, a.hi), (b.lo, b.hi))
 
 Base.iszero(u::TwoSided) = iszero(u.lo) && iszero(u.hi)
 

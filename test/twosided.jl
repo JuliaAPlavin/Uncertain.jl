@@ -7,6 +7,11 @@
         @test hash(a) == hash(b)
     end
 
+    function test_total_order(a, b)
+        relations = (isequal(a, b), isless(a, b), isless(b, a))
+        @test count(identity, relations) == 1
+    end
+
     @test U.TwoSided(0.1, 0.2) == U.TwoSided(0.1, 0.2)
     @test U.TwoSided(0.1, 0.2) ≈ U.TwoSided(0.1, 0.2)
     @test U.TwoSided(0.1, 0.2) != U.TwoSided(0.1, nextfloat(0.2))
@@ -24,6 +29,19 @@
 
     @test U.TwoSided(1, 1) != 1
     @test !isequal(U.TwoSided(1, 1), 1)
+
+    a = U.TwoSided(0.1, 0.2)
+    b = U.TwoSided(0.1, 0.3)
+    @testset for (x, y) in [
+        (a, b),
+        (U.TwoSided(1, 2), U.TwoSided(1.0, 2.0)),
+        (U.TwoSided(NaN, 1.0), U.TwoSided(NaN, 1.0)),
+        (U.TwoSided(-0.0, 1.0), U.TwoSided(+0.0, 1.0)),
+    ]
+        test_total_order(x, y)
+    end
+    @test isless(a, b)
+    @test sort([1 ±ᵤ b, 1 ±ᵤ a]) == [1 ±ᵤ a, 1 ±ᵤ b]
 
     test_isequal_hash(
         1 ±ᵤ U.TwoSided(1, 2),
