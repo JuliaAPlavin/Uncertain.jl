@@ -228,8 +228,16 @@ end
     a = 3 ±ᵤ 0.2
     b = 3u"km" ±ᵤ 0.2u"km"
     c = 3.0u"km" ±ᵤ 200u"m"
+    z = 3u"km" ±ᵤ 0u"km"
 
     @test b === (3 ±ᵤ 0.2)u"km"
+
+    @test isequal(z, 3u"km")
+    @test isequal(3u"km", z)
+    @test !isequal(b, 3u"km")
+    @test !isequal(3u"km", b)
+    @test hash(z) == hash(3u"km")
+    @test Dict{Any,Symbol}(z => :present)[3u"km"] === :present
 
     @test unit(a) == NoUnits
     @test unit(b) == u"km"

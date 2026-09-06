@@ -14,6 +14,9 @@ Base.promote_rule(::Type{Quantity{S,D,U_}}, ::Type{<:U.ValueNumber{T,TE}}) where
 Base.promote_rule(::Type{Quantity{S,D,U_}}, ::Type{<:U.ValueReal{T,TE}}) where {S, D, U_, T, TE} =
     return U.ValueReal{promote_type(Quantity{S,D,U_}, T), promote_type(Quantity{S,D,U_}, TE)}
 
+Base.isequal(x::U.Value, y::Unitful.AbstractQuantity) = @invoke isequal(x::U.Value, y::Number)
+Base.isequal(x::Unitful.AbstractQuantity, y::U.Value) = @invoke isequal(x::Number, y::U.Value)
+
 function Base.:*(x::U.Value, y::Unitful.Units, z::Unitful.Units...)
     u = *(y, z...)
     U.Value(U.value(x) * u, U.uncertainty(x) * u)
