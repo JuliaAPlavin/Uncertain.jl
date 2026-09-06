@@ -1,12 +1,34 @@
 @testitem "one vs two sided" begin
     using Unitful
 
+    function test_isequal_hash(a, b)
+        @test isequal(a, b)
+        @test isequal(b, a)
+        @test hash(a) == hash(b)
+    end
+
     @test U.TwoSided(0.1, 0.2) == U.TwoSided(0.1, 0.2)
     @test U.TwoSided(0.1, 0.2) ≈ U.TwoSided(0.1, 0.2)
     @test U.TwoSided(0.1, 0.2) != U.TwoSided(0.1, nextfloat(0.2))
     @test U.TwoSided(0.1, 0.2) ≈ U.TwoSided(0.1, nextfloat(0.2))
     @test U.TwoSided(0.1, 0.2) != U.TwoSided(0.1, 0.3)
     @test !(U.TwoSided(0.1, 0.2) ≈ U.TwoSided(0.1, 0.3))
+
+    test_isequal_hash(U.TwoSided(1, 2), U.TwoSided(1.0, 2.0))
+
+    @test U.TwoSided(NaN, 1.0) != U.TwoSided(NaN, 1.0)
+    test_isequal_hash(U.TwoSided(NaN, 1.0), U.TwoSided(NaN, 1.0))
+
+    @test U.TwoSided(-0.0, 1.0) == U.TwoSided(+0.0, 1.0)
+    @test !isequal(U.TwoSided(-0.0, 1.0), U.TwoSided(+0.0, 1.0))
+
+    @test U.TwoSided(1, 1) != 1
+    @test !isequal(U.TwoSided(1, 1), 1)
+
+    test_isequal_hash(
+        1 ±ᵤ U.TwoSided(1, 2),
+        1.0 ±ᵤ U.TwoSided(1.0, 2.0),
+    )
 
     @test iszero(U.TwoSided(0.0, 0.0))
     @test !iszero(U.TwoSided(0.0, 0.1))

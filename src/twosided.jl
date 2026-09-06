@@ -28,6 +28,10 @@ Base.show(io::IO, u::TwoSided) = print(io, "TwoSided(", u.lo, ", ", u.hi, ")")
 
 Base.float(::Type{TwoSided{T}}) where {T} = TwoSided{float(T)}
 
+Base.:(==)(a::TwoSided, b::TwoSided) = a.lo == b.lo && a.hi == b.hi
+Base.isequal(a::TwoSided, b::TwoSided) = isequal(a.lo, b.lo) && isequal(a.hi, b.hi)
+Base.hash(u::TwoSided, h::UInt) = hash(u.lo, hash(u.hi, hash(TwoSided, h)))
+
 Base.iszero(u::TwoSided) = iszero(u.lo) && iszero(u.hi)
 
 Base.:*(a::TwoSided, b) = @modify(p -> p * b, a[∗ₚ])
