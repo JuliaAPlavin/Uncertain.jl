@@ -128,11 +128,12 @@ Base.abs(x::Value) = Value(abs(_v(x)), _Δ(x))
 Base.abs2(x::Value) = Value(abs2(_v(x)), 2 * abs(_v(x)) *₀ _Δ(x))
 Base.angle(x::Value) = Value(angle(_v(x)), _Δ(x)/abs(_v(x)))
 
-for f in [:<, :isless]
-    for T in [:Value, :Number, :Rational, :Real, :AbstractFloat]
-        @eval Base.$f(a::Value, b::$T) = $f(_v(a), _v(b))
-        T != :Value && @eval Base.$f(a::$T, b::Value) = $f(_v(a), _v(b))
-    end
+for T in [:Value, :Number, :Rational, :Real, :AbstractFloat]
+    @eval Base.:<(a::Value, b::$T) = <(_v(a), _v(b))
+    T != :Value && @eval Base.:<(a::$T, b::Value) = <(_v(a), _v(b))
+
+    @eval Base.isless(a::Value, b::$T) = isless((_v(a), _Δ(a)), (_v(b), _Δ(b)))
+    T != :Value && @eval Base.isless(a::$T, b::Value) = isless((_v(a), _Δ(a)), (_v(b), _Δ(b)))
 end
 
 for T in [:Value, :Number, :Rational, :Real, :AbstractFloat]

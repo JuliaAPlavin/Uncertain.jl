@@ -218,6 +218,36 @@ end
     end
 end
 
+@testitem "ordering" begin
+    function test_total_order(a, b)
+        relations = (isequal(a, b), isless(a, b), isless(b, a))
+        @test count(identity, relations) == 1
+    end
+
+    a = U.Value(1.0, 0.1)
+    b = U.Value(1.0, 0.2)
+    c = U.Value(2.0, 0.1)
+
+    @testset for (x, y) in [
+        (a, b),
+        (a, 1.0),
+        (U.Value(1.0, 0.0), 1.0),
+        (U.Value(NaN, 0.1), U.Value(NaN, 0.1)),
+        (U.Value(-0.0, 0.1), U.Value(+0.0, 0.1)),
+    ]
+        test_total_order(x, y)
+    end
+
+    @test isless(a, b)
+    @test isless(1.0, a)
+    @test sort([b, c, a]) == [a, b, c]
+    @test min(a, b) == a
+    @test max(b, a) == b
+
+    @test !(a < b)
+    @test !(b < a)
+end
+
 @testitem "broadcast" begin
     @test U.Value(1, 0.1) .+ [1, 2, 3] == U.Value.([2, 3, 4], 0.1)
 end
@@ -238,6 +268,13 @@ end
     @test !isequal(3u"km", b)
     @test hash(z) == hash(3u"km")
     @test Dict{Any,Symbol}(z => :present)[3u"km"] === :present
+
+    @test !isless(z, 3u"km")
+    @test !isless(3u"km", z)
+    @test isless(3u"km", b)
+    @test !isless(b, 3u"km")
+    @test isless(b, 4u"km")
+    @test isless(2u"km", b)
 
     @test unit(a) == NoUnits
     @test unit(b) == u"km"

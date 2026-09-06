@@ -16,6 +16,8 @@ Base.promote_rule(::Type{Quantity{S,D,U_}}, ::Type{<:U.ValueReal{T,TE}}) where {
 
 Base.isequal(x::U.Value, y::Unitful.AbstractQuantity) = @invoke isequal(x::U.Value, y::Number)
 Base.isequal(x::Unitful.AbstractQuantity, y::U.Value) = @invoke isequal(x::Number, y::U.Value)
+Base.isless(x::U.Value, y::Unitful.AbstractQuantity) = @invoke isless(x::U.Value, y::Number)
+Base.isless(x::Unitful.AbstractQuantity, y::U.Value) = @invoke isless(x::Number, y::U.Value)
 
 function Base.:*(x::U.Value, y::Unitful.Units, z::Unitful.Units...)
     u = *(y, z...)
