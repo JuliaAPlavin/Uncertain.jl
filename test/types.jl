@@ -160,6 +160,12 @@ end
 end
 
 @testitem "equality" begin
+    function test_isequal_hash(a, b)
+        @test isequal(a, b)
+        @test isequal(b, a)
+        @test hash(a) == hash(b)
+    end
+
     @testset for f in [==, isequal]
         @test f(U.Value(1, 0), 1)
         @test !f(U.Value(1, 0.1), 1)
@@ -171,6 +177,14 @@ end
     @test !isequal(U.Value(+0.0, 0.1), U.Value(-0.0, 0.1))
     @test U.Value(NaN, 0.1) != U.Value(NaN, 0.1)
     @test isequal(U.Value(NaN, 0.1), U.Value(NaN, 0.1))
+
+    @test U.Value(1.0, NaN) != U.Value(1.0, NaN)
+    test_isequal_hash(U.Value(1.0, NaN), U.Value(1.0, NaN))
+
+    @test ismissing(U.ValueAny(1, missing) == U.ValueAny(1, missing))
+    test_isequal_hash(U.ValueAny(1, missing), U.ValueAny(1, missing))
+
+    @test !isequal(U.Value(1.0, -0.0), U.Value(1.0, +0.0))
 
     @test U.Value(1 + 2im, 0) == 1 + 2im
     @test Complex(U.Value(1, 0), U.Value(2, 0)) == 1 + 2im
