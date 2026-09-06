@@ -1,3 +1,40 @@
+@testitem "CovMat equality" begin
+    using LinearAlgebra: Symmetric
+    using StaticArrays: SMatrix
+
+    function test_isequal_hash(a, b)
+        @test isequal(a, b)
+        @test isequal(b, a)
+        @test hash(a) == hash(b)
+    end
+
+    matrix = [1.0 0.25; 0.25 2.0]
+    cov = U.CovMat(matrix)
+    @testset for other in [
+        U.CovMat(copy(matrix)),
+        U.CovMat(Symmetric(copy(matrix))),
+        U.CovMat(SMatrix{2,2}(matrix)),
+    ]
+        @test cov == other
+        test_isequal_hash(cov, other)
+    end
+
+    nan_a = U.CovMat(reshape([NaN], 1, 1))
+    nan_b = U.CovMat(reshape([NaN], 1, 1))
+    @test nan_a != nan_b
+    test_isequal_hash(nan_a, nan_b)
+
+    missing_a = U.CovMat(reshape(Union{Missing,Float64}[missing], 1, 1))
+    missing_b = U.CovMat(reshape(Union{Missing,Float64}[missing], 1, 1))
+    @test ismissing(missing_a == missing_b)
+    test_isequal_hash(missing_a, missing_b)
+
+    @test U.CovMat(reshape([-0.0], 1, 1)) == U.CovMat(reshape([+0.0], 1, 1))
+    @test !isequal(U.CovMat(reshape([-0.0], 1, 1)), U.CovMat(reshape([+0.0], 1, 1)))
+
+    test_isequal_hash([1, 2] ±ᵤ U.CovMat(matrix), [1, 2] ±ᵤ U.CovMat(copy(matrix)))
+end
+
 @testitem "CovMat 1d" begin
     using LinearAlgebra
     using StaticArrays
